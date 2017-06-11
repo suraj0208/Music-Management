@@ -20,16 +20,16 @@ import java.util.ResourceBundle;
  */
 public class MainWindow extends Application implements Initializable {
     @FXML
-    Button btnSearch;
+    private Button btnSearch;
 
     @FXML
-    ComboBox<String> comboBoxSearch;
+    private ComboBox<String> comboBoxSearch;
 
     @FXML
-    ComboBox<String> searchFieldComboBox;
+    private ComboBox<String> searchFieldComboBox;
 
     @FXML
-    MenuBar menuBar;
+    private MenuBar menuBar;
 
     private DatabaseHelper databaseHelper = new DatabaseHelper();
     private ArrayList<String> songNames;
@@ -51,7 +51,7 @@ public class MainWindow extends Application implements Initializable {
     public void onSearch() throws Exception {
 
 
-        if (comboBoxSearch.getSelectionModel().getSelectedItem()== null || comboBoxSearch.getSelectionModel().getSelectedItem().length() == 0) {
+        if (comboBoxSearch.getSelectionModel().getSelectedItem() == null || comboBoxSearch.getSelectionModel().getSelectedItem().length() == 0) {
             Utils.showError("Invalid Input");
             return;
         }
@@ -248,14 +248,20 @@ public class MainWindow extends Application implements Initializable {
 
     public void selectionChanged() {
         if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 0) {
-            comboBoxSearch.getItems().clear();
+            if (comboBoxSearch.getItems().size() > 0)
+                comboBoxSearch.getItems().clear();
             comboBoxSearch.getItems().addAll(songNames);
+            FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         } else if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 1) {
-            comboBoxSearch.getItems().clear();
+            if (comboBoxSearch.getItems().size() > 0)
+                comboBoxSearch.getItems().clear();
             comboBoxSearch.getItems().addAll(movieNames);
-        }else {
-            comboBoxSearch.getItems().clear();
+            FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
+        } else {
+            if (comboBoxSearch.getItems().size() > 0)
+                comboBoxSearch.getItems().clear();
             comboBoxSearch.getItems().addAll(artistNames);
+            FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         }
     }
 }

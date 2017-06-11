@@ -399,21 +399,6 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
 
-        for (Integer i : songs.keySet()) {
-            Song song = songs.get(i);
-
-            System.out.print(song.getId());
-            System.out.print(" ");
-            System.out.print(song.getName());
-            System.out.print(" ");
-
-            for (Artist artist : song.getArtists())
-                System.out.print(artist.getName() + " ");
-
-
-            System.out.println();
-        }
-
         ArrayList<Song> songArrayList = new ArrayList<>();
 
         for (Integer k : songs.keySet())
@@ -504,4 +489,35 @@ public class DatabaseHelper {
         return  -1;
     }
 
+    public boolean deleteMovie(int id) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("delete from Movies where movie_id=?");
+            preparedStatement.setInt(1,id);
+            preparedStatement.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean updateMovie(Movie movie) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE Movies SET movie_name=?,movie_year=?,language_id=?,movie_record_no=? where movie_id=?");
+            statement.setString(1,movie.getName());
+            statement.setInt(2,movie.getYear());
+            statement.setInt(3,movie.getLanguageId());
+            statement.setInt(4,movie.getRecordNo());
+            statement.setInt(5,movie.getId());
+
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

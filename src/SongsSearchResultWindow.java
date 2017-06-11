@@ -29,10 +29,10 @@ import java.util.ResourceBundle;
 public class SongsSearchResultWindow extends Application implements Initializable {
 
     @FXML
-    public Label lblSearchSongName;
+    private  Label lblSearchSongName;
 
     @FXML
-    public TableView<Song> tblSearchResults;
+    private  TableView<Song> tblSearchResults;
 
     private static ArrayList<Song> songs;
 

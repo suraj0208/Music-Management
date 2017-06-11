@@ -27,10 +27,10 @@ import java.util.ResourceBundle;
 public class ArtistSongsSearchResults extends Application implements Initializable {
 
     @FXML
-    public Label lblSearchArtistName;
+    private  Label lblSearchArtistName;
 
     @FXML
-    public TableView<Song> tblSearchResults;
+    private  TableView<Song> tblSearchResults;
 
     private static ArrayList<Song> songs;
 
@@ -46,7 +46,7 @@ public class ArtistSongsSearchResults extends Application implements Initializab
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("ArtistSongsSearchResults.fxml.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("ArtistSongsSearchResults.fxml"));
         primaryStage.setTitle("Search Results");
         primaryStage.setScene(new Scene(root, 700, 500));
         primaryStage.show();
@@ -54,7 +54,7 @@ public class ArtistSongsSearchResults extends Application implements Initializab
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        lblSearchArtistName.setText("Search Results for '" + searchName + "'");
+        lblSearchArtistName.setText("Songs by '" + searchName + "'");
         setSongsTable();
     }
 

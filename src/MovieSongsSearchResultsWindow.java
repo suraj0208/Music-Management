@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -15,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -22,24 +24,29 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 8/6/17.
  */
-public class MovieSongsSearchResultsWindow extends Application implements Initializable {
+public class MovieSongsSearchResultsWindow extends Application implements Initializable, MovieEditedCallBack {
 
     @FXML
-    public Label lblMovieName;
+    private Label lblMovieName;
 
     @FXML
-    public Label lblMovieLanguage;
+    private Label lblMovieLanguage;
 
     @FXML
-    public Label lblMovieYear;
+    private Label lblMovieYear;
 
     @FXML
-    public Label lblMovieRecordNumber;
+    private Label lblMovieRecordNumber;
 
     @FXML
-    public TableView<Song> tblSearchResults;
+    private TableView<Song> tblSearchResults;
+
+    @FXML
+    private Button btnEditMovie;
 
     private static ArrayList<Song> songs;
+
+    private static Movie movie;
 
     public static ArrayList<Song> getSongs() {
         return songs;
@@ -59,9 +66,23 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        movie = songs.get(0).getMovie();
         setMovieDetails();
         setSongsTable();
+        AddMovieWindow.setMovieEditedCallBack(this);
+
+        btnEditMovie.setOnAction(e -> {
+            AddMovieWindow.setMovie(songs.get(0).getMovie());
+            Parent root = null;
+            try {
+                root = FXMLLoader.load(getClass().getResource("AddMovieWindow.fxml"));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root, 500, 300));
+                stage.show();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
     }
 
     private void setSongsTable() {
@@ -103,10 +124,32 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
     }
 
     private void setMovieDetails() {
-        lblMovieName.setText(songs.get(0).getMovie().getName());
-        lblMovieLanguage.setText("Language: " + songs.get(0).getMovie().getLanguage());
-        lblMovieYear.setText("Year: " + songs.get(0).getMovie().getYear());
-        lblMovieRecordNumber.setText("Record No: " + songs.get(0).getMovie().getRecordNo());
+        lblMovieName.setText(movie.getName());
+        lblMovieLanguage.setText("Language: " + movie.getLanguage());
+        lblMovieYear.setText("Year: " + movie.getYear());
+        lblMovieRecordNumber.setText("Record No: " + movie.getRecordNo());
     }
 
+    @Override
+    public void movieEdited() {
+        if (movie == null) {
+            closeWindow();
+            return;
+        }
+
+        setMovieDetails();
+    }
+
+    private void closeWindow() {
+        ((Stage) (btnEditMovie.getScene()).getWindow()).close();
+    }
+
+
+    public static void setMovie(Movie movie) {
+        MovieSongsSearchResultsWindow.movie = movie;
+    }
+}
+
+interface MovieEditedCallBack {
+    void movieEdited();
 }

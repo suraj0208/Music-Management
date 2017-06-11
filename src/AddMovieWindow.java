@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -19,27 +20,44 @@ import java.util.ResourceBundle;
  */
 public class AddMovieWindow extends Application implements Initializable, LanguageAddedCallBack {
     @FXML
-    TextField txtFieldMovieName;
+    private TextField txtFieldMovieName;
 
     @FXML
-    TextField txtFieldMovieYear;
+    private TextField txtFieldMovieYear;
 
     @FXML
-    ComboBox<String> comboMovieLanguage;
+    private ComboBox<String> comboMovieLanguage;
 
     @FXML
-    Button btnAddNewLanguage;
+    private Button btnAddNewLanguage;
 
     @FXML
-    TextField txtFieldRecordNo;
+    private TextField txtFieldRecordNo;
 
     @FXML
-    Button btnSaveMovie;
+    private Button btnSaveMovie;
 
+    @FXML
+    private Button btnDeleteMovie;
+
+    @FXML
+    private Label lblAddMovieWindowTitle;
 
     private DatabaseHelper databaseHelper = new DatabaseHelper();
 
     private ArrayList<Language> languageArrayList;
+
+    private static Movie movie;
+
+    public static Movie getMovie() {
+        return movie;
+    }
+
+    public static void setMovie(Movie movie) {
+        AddMovieWindow.movie = movie;
+    }
+
+    private static MovieEditedCallBack movieEditedCallBack;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -51,7 +69,6 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         btnAddNewLanguage.setOnAction(e -> {
             Parent root = null;
             try {
@@ -69,41 +86,59 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
         addLanguagesToComboBox();
 
+        if (movie != null) {
+
+            txtFieldMovieName.setText(movie.getName());
+            txtFieldMovieYear.setText("" + movie.getYear());
+            txtFieldRecordNo.setText("" + movie.getRecordNo());
+            comboMovieLanguage.setValue(movie.getLanguage());
+            lblAddMovieWindowTitle.setText("Edit Movie Details");
+
+            btnDeleteMovie.setOnAction(e -> {
+
+                if (databaseHelper.deleteMovie(movie.getId())) {
+                    Utils.showInfo("Movie Deleted");
+                } else {
+                    Utils.showError("Error Occurred");
+                }
+
+                MovieSongsSearchResultsWindow.setMovie(null);
+                movieEditedCallBack.movieEdited();
+
+            });
+
+            btnSaveMovie.setOnAction(e -> {
+                if (!prepareMovie())
+                    return;
+
+                MovieSongsSearchResultsWindow.setMovie(movie);
+
+                if (databaseHelper.updateMovie(movie)) {
+                    Utils.showInfo("Movie Saved");
+                    clearFields();
+                    closeWindow();
+                    MovieSongsSearchResultsWindow.setMovie(movie);
+                    movieEditedCallBack.movieEdited();
+                }
+            });
+
+            return;
+        }
+
+        btnDeleteMovie.setVisible(false);
+
         btnSaveMovie.setOnAction(e -> {
             try {
 
-                if (txtFieldMovieName.getText().length() == 0 || txtFieldMovieYear.getText().length() == 0 || txtFieldRecordNo.getText().length() == 0) {
-                    Utils.showError("Fill required fields");
+                if (!prepareMovie())
                     return;
-                }
 
-
-                String movieName = txtFieldMovieName.getText();
-                int movieYear = Integer.parseInt(txtFieldMovieYear.getText());
-                int movieRecordNo = Integer.parseInt(txtFieldRecordNo.getText());
-
-                if (languageArrayList.size() == 0) {
-                    Utils.showError("Add a language first");
-                    return;
-                }
-
-                Language selectedLanguage = languageArrayList.get(0);
-
-                for (Language language : languageArrayList)
-                    if (language.getName().equals(comboMovieLanguage.getValue())) {
-                        selectedLanguage = language;
-                        break;
-                    }
-
-                Movie movie = new Movie(movieName, movieYear, selectedLanguage.getId(), movieRecordNo);
                 databaseHelper.addMovie(movie);
+                System.out.println(movie.getId());
+                clearFields();
 
-                txtFieldMovieName.clear();
-                txtFieldMovieYear.clear();
-                txtFieldRecordNo.clear();
-
-                Utils.showInfo("Movie added");
-
+                Utils.showInfo("Movie Saved");
+                closeWindow();
             } catch (Exception ex) {
                 ex.printStackTrace();
                 Utils.showError("Invalid Input");
@@ -111,6 +146,16 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
         });
 
+    }
+
+    private void closeWindow() {
+        ((Stage) (btnSaveMovie.getScene()).getWindow()).close();
+    }
+
+    private void clearFields() {
+        txtFieldMovieName.clear();
+        txtFieldMovieYear.clear();
+        txtFieldRecordNo.clear();
     }
 
     private void addLanguagesToComboBox() {
@@ -135,8 +180,44 @@ public class AddMovieWindow extends Application implements Initializable, Langua
     public void languageAdded() {
         addLanguagesToComboBox();
     }
+
+    private boolean prepareMovie() {
+        if (txtFieldMovieName.getText().length() == 0 || txtFieldMovieYear.getText().length() == 0 || txtFieldRecordNo.getText().length() == 0) {
+            Utils.showError("Fill required fields");
+            return false;
+        }
+
+        String movieName = txtFieldMovieName.getText();
+        int movieYear = Integer.parseInt(txtFieldMovieYear.getText());
+        int movieRecordNo = Integer.parseInt(txtFieldRecordNo.getText());
+
+        if (languageArrayList.size() == 0) {
+            Utils.showError("Add a language first");
+            return false;
+        }
+        Language selectedLanguage = languageArrayList.get(0);
+
+        for (Language language : languageArrayList)
+            if (language.getName().equals(comboMovieLanguage.getValue())) {
+                selectedLanguage = language;
+                break;
+            }
+
+        if (movie != null) {
+            movie = new Movie(movie.getId(), movieName, movieYear, selectedLanguage.getId(), movieRecordNo);
+            return true;
+        }
+
+        movie = new Movie(movieName, movieYear, selectedLanguage.getId(), movieRecordNo);
+
+        return true;
+    }
+
+    public static void setMovieEditedCallBack(MovieEditedCallBack movieEditedCallBack) {
+        AddMovieWindow.movieEditedCallBack = movieEditedCallBack;
+    }
 }
 
-interface LanguageAddedCallBack{
+interface LanguageAddedCallBack {
     void languageAdded();
 }

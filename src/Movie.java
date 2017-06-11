@@ -11,6 +11,14 @@ public class Movie {
     public Movie() {
     }
 
+    public Movie(int id, String movieName, int movieYear, int languageId, int movieRecordNo) {
+        this.id = id;
+        this.name = movieName;
+        this.year = movieYear;
+        this.languageId = languageId;
+        this.recordNo = movieRecordNo;
+    }
+
     public int getRecordNo() {
         return recordNo;
     }
@@ -21,7 +29,7 @@ public class Movie {
 
     private int recordNo;
 
-    public Movie( String name, int year, int languageId, int recordNo) {
+    public Movie(String name, int year, int languageId, int recordNo) {
         this.name = name;
         this.year = year;
         this.languageId = languageId;

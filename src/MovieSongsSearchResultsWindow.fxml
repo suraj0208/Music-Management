@@ -3,6 +3,7 @@
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -14,21 +15,33 @@
       </BorderPane.margin>
     </TableView>
   </center>
+  <fx:define>
+    <Image url="images/ic_edit.png" requestedHeight="20.0" requestedWidth="20.0" fx:id="btnImage" />
+  </fx:define>
   <top>
     <GridPane vgap="10.0">
       <children>
-        <Label fx:id="lblMovieName" prefWidth="239.0" text="Movie Name" GridPane.columnIndex="0" GridPane.rowIndex="0">
-          <font>
-            <Font name="System Bold" size="22.0" />
-          </font>
-        </Label>
+        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+          <children>
+            <Label fx:id="lblMovieName" prefWidth="301.0" text="Movie Name">
+              <font>
+                <Font name="System Bold" size="22.0" />
+              </font>
+            </Label>
+          </children>
+        </HBox>
         <Label fx:id="lblMovieLanguage" text="Language" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <Label fx:id="lblMovieYear" text="Year" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
         <Label fx:id="lblMovieRecordNumber" text="Record No" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Button fx:id="btnEditMovie" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
+          <graphic>
+            <ImageView image="$btnImage" />
+          </graphic>
+        </Button>
       </children>
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="299.0" minWidth="10.0" prefWidth="287.0" />
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="389.0" minWidth="10.0" prefWidth="293.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="402.0" minWidth="10.0" prefWidth="402.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="389.0" minWidth="10.0" prefWidth="178.0" />
       </columnConstraints>
       <rowConstraints>
         <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
