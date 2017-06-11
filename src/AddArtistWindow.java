@@ -23,7 +23,7 @@ public class AddArtistWindow extends Application implements Initializable {
 
     private static ArtistAdddedCallBack artistAdddedCallBack;
 
-    public static void setArtistAdddedCallBack(ArtistAdddedCallBack artistAdddedCallBack) {
+    public static void setArtistAddedCallBack(ArtistAdddedCallBack artistAdddedCallBack) {
         AddArtistWindow.artistAdddedCallBack = artistAdddedCallBack;
     }
 

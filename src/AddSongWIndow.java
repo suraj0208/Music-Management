@@ -9,7 +9,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import javax.rmi.CORBA.Util;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,7 +90,7 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
                 root = FXMLLoader.load(getClass().getResource("AddArtistWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
-                AddArtistWindow.setArtistAdddedCallBack(this);
+                AddArtistWindow.setArtistAddedCallBack(this);
                 stage.show();
             } catch (IOException e1) {
                 e1.printStackTrace();
