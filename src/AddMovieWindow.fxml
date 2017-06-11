@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="441.999977929685" prefWidth="520.0000558593674" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="AddMovieWindow">
+  <bottom>
+    <VBox prefHeight="32.0" prefWidth="521.0" />
+  </bottom>
+  <center>
+    <GridPane alignment="TOP_LEFT" prefHeight="349.0" prefWidth="493.0" vgap="40.0">
+      <children>
+        <Label text="Name :" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0" GridPane.valignment="CENTER">
+          <font>
+            <Font size="18.0" fx:id="x1" />
+          </font>
+        </Label>
+        <Label font="$x1" text="Year :" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <Label font="$x1" text="Language :" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+        <TextField fx:id="txtFieldMovieName" prefHeight="32.0" prefWidth="398.0" promptText="Movie Name" GridPane.columnIndex="1" GridPane.rowIndex="0">
+          <GridPane.margin>
+            <Insets left="5.0" right="5.0" fx:id="x2" />
+          </GridPane.margin>
+        </TextField>
+        <TextField fx:id="txtFieldMovieYear" prefHeight="32.0" prefWidth="398.0" promptText="Year" GridPane.columnIndex="1" GridPane.margin="$x2" GridPane.rowIndex="1" />
+        <HBox alignment="CENTER_LEFT" fillHeight="false" padding="$x2" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+          <children>
+            <ComboBox fx:id="comboMovieLanguage" prefWidth="202.0">
+              <items>
+                <FXCollections fx:factory="observableArrayList" />
+              </items>
+            </ComboBox>
+            <Button fx:id="btnAddNewLanguage" mnemonicParsing="false" prefWidth="222.0" text="Add New Language" />
+          </children>
+        </HBox>
+        <TextField id="txtFieldMovieYear" fx:id="txtFieldRecordNo" prefHeight="32.0" prefWidth="398.0" promptText="Record No" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+          <GridPane.margin>
+            <Insets left="5.0" right="5.0" fx:id="x2" />
+          </GridPane.margin>
+        </TextField>
+        <Label font="$x1" text="Record No :" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+        <Button fx:id="btnSaveMovie" mnemonicParsing="false" prefHeight="28.0" prefWidth="202.0" text="Save" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="299.0" minWidth="10.0" prefWidth="117.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="449.0" minWidth="10.0" prefWidth="394.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="98.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="156.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="204.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="247.0" minHeight="0.0" prefHeight="15.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="247.0" minHeight="0.0" prefHeight="32.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <BorderPane.margin>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="20.0" />
+      </BorderPane.margin>
+    </GridPane>
+  </center>
+  <top>
+    <Label text="Add New Movie" BorderPane.alignment="CENTER">
+      <font>
+        <Font name="System Bold" size="22.0" />
+      </font>
+      <BorderPane.margin>
+        <Insets top="10.0" />
+      </BorderPane.margin>
+    </Label>
+  </top>
+</BorderPane>
