@@ -1,6 +1,5 @@
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,8 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,13 +43,12 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
     @FXML
     private Button btnEditMovie;
 
+    @FXML
+    private BorderPane borderPaneRoot;
+
     private static ArrayList<Song> songs;
 
     private static Movie movie;
-
-    public static ArrayList<Song> getSongs() {
-        return songs;
-    }
 
     public static void setSongs(ArrayList<Song> songs) {
         MovieSongsSearchResultsWindow.songs = songs;
@@ -69,16 +67,26 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
         movie = songs.get(0).getMovie();
         setMovieDetails();
         setSongsTable();
-        AddMovieWindow.setMovieEditedCallBack(this);
+        setupEditButton();
+    }
 
+    private void setupCloseEvent() {
+        borderPaneRoot.getScene().getWindow().setOnCloseRequest(event -> AddMovieWindow.removeMovieEditedCallBack(this));
+    }
+
+    private void setupEditButton() {
         btnEditMovie.setOnAction(e -> {
             AddMovieWindow.setMovie(songs.get(0).getMovie());
             Parent root = null;
             try {
+                AddMovieWindow.addMovieEditedCallBack(this);
+                setupCloseEvent();
                 root = FXMLLoader.load(getClass().getResource("AddMovieWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 300));
                 stage.show();
+
+
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -131,12 +139,12 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
     }
 
     @Override
-    public void movieEdited() {
-        if (movie == null) {
+    public void movieEdited(Movie original, Movie edited) {
+        if (edited == null) {
             closeWindow();
             return;
         }
-
+        MovieSongsSearchResultsWindow.movie = edited;
         setMovieDetails();
     }
 
@@ -144,12 +152,8 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
         ((Stage) (btnEditMovie.getScene()).getWindow()).close();
     }
 
-
-    public static void setMovie(Movie movie) {
-        MovieSongsSearchResultsWindow.movie = movie;
-    }
 }
 
 interface MovieEditedCallBack {
-    void movieEdited();
+    void movieEdited(Movie original, Movie edited);
 }

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="MovieSongsSearchResultsWindow">
+<BorderPane fx:id="borderPaneRoot" prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="MovieSongsSearchResultsWindow">
   <center>
     <TableView fx:id="tblSearchResults" prefHeight="200.0" prefWidth="200.0">
       <BorderPane.margin>

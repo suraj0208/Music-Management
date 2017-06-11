@@ -57,7 +57,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
         AddMovieWindow.movie = movie;
     }
 
-    private static MovieEditedCallBack movieEditedCallBack;
+    private static ArrayList<MovieEditedCallBack> movieEditedCallBacks;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -88,6 +88,8 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
         if (movie != null) {
 
+            final Movie originalMovie = movie;
+
             txtFieldMovieName.setText(movie.getName());
             txtFieldMovieYear.setText("" + movie.getYear());
             txtFieldRecordNo.setText("" + movie.getRecordNo());
@@ -95,30 +97,29 @@ public class AddMovieWindow extends Application implements Initializable, Langua
             lblAddMovieWindowTitle.setText("Edit Movie Details");
 
             btnDeleteMovie.setOnAction(e -> {
-
                 if (databaseHelper.deleteMovie(movie.getId())) {
                     Utils.showInfo("Movie Deleted");
+
+                    for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
+                        movieEditedCallBack.movieEdited(originalMovie, null);
+
+                    closeWindow();
                 } else {
                     Utils.showError("Error Occurred");
                 }
-
-                MovieSongsSearchResultsWindow.setMovie(null);
-                movieEditedCallBack.movieEdited();
-
             });
 
             btnSaveMovie.setOnAction(e -> {
                 if (!prepareMovie())
                     return;
 
-                MovieSongsSearchResultsWindow.setMovie(movie);
-
                 if (databaseHelper.updateMovie(movie)) {
                     Utils.showInfo("Movie Saved");
                     clearFields();
                     closeWindow();
-                    MovieSongsSearchResultsWindow.setMovie(movie);
-                    movieEditedCallBack.movieEdited();
+
+                    for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
+                        movieEditedCallBack.movieEdited(originalMovie, movie);
                 }
             });
 
@@ -129,7 +130,6 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
         btnSaveMovie.setOnAction(e -> {
             try {
-
                 if (!prepareMovie())
                     return;
 
@@ -213,9 +213,20 @@ public class AddMovieWindow extends Application implements Initializable, Langua
         return true;
     }
 
-    public static void setMovieEditedCallBack(MovieEditedCallBack movieEditedCallBack) {
-        AddMovieWindow.movieEditedCallBack = movieEditedCallBack;
+    public static void addMovieEditedCallBack(MovieEditedCallBack movieEditedCallBack) {
+        if (movieEditedCallBacks == null)
+            movieEditedCallBacks = new ArrayList<>();
+
+        AddMovieWindow.movieEditedCallBacks.add(movieEditedCallBack);
     }
+
+    public static void removeMovieEditedCallBack(MovieEditedCallBack movieEditedCallBack) {
+        if (movieEditedCallBacks == null)
+            return;
+
+        movieEditedCallBacks.remove(movieEditedCallBack);
+    }
+
 }
 
 interface LanguageAddedCallBack {

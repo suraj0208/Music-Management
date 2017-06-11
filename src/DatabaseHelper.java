@@ -2,6 +2,7 @@ import java.security.Key;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by suraj on 7/6/17.
@@ -237,12 +238,12 @@ public class DatabaseHelper {
         return null;
     }
 
-    public ArrayList<String> getAllMovies(){
+    public HashSet<String> getAllMovies(){
         try {
 
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT movie_name FROM Movies;");
 
-            ArrayList<String> movies = new ArrayList<>();
+            HashSet<String> movies = new HashSet<>();
 
             while (resultSet.next()){
                 movies.add(resultSet.getString(1));

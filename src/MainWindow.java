@@ -12,13 +12,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 
 /**
  * Created by suraj on 7/6/17.
  */
-public class MainWindow extends Application implements Initializable {
+public class MainWindow extends Application implements Initializable, MovieEditedCallBack {
     @FXML
     private Button btnSearch;
 
@@ -33,7 +34,7 @@ public class MainWindow extends Application implements Initializable {
 
     private DatabaseHelper databaseHelper = new DatabaseHelper();
     private ArrayList<String> songNames;
-    private ArrayList<String> movieNames;
+    private HashSet<String> movieNames;
     private ArrayList<String> artistNames;
 
     public static void main(String[] args) {
@@ -49,8 +50,6 @@ public class MainWindow extends Application implements Initializable {
     }
 
     public void onSearch() throws Exception {
-
-
         if (comboBoxSearch.getSelectionModel().getSelectedItem() == null || comboBoxSearch.getSelectionModel().getSelectedItem().length() == 0) {
             Utils.showError("Invalid Input");
             return;
@@ -109,11 +108,16 @@ public class MainWindow extends Application implements Initializable {
                 return;
             }
 
+            AddMovieWindow.addMovieEditedCallBack(this);
+            (btnSearch.getScene()).getWindow().setOnCloseRequest(event -> AddMovieWindow.removeMovieEditedCallBack(this));
+
             MovieSongsSearchResultsWindow.setSongs(songs);
             root = FXMLLoader.load(getClass().getResource("MovieSongsSearchResultsWindow.fxml"));
             stage = new Stage();
             stage.setScene(new Scene(root, 500, 500));
             stage.show();
+
+
         } else {
             songs = databaseHelper.getSongsForArtist(searchName);
 
@@ -146,7 +150,6 @@ public class MainWindow extends Application implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         searchFieldComboBox.getSelectionModel().selectFirst();
         setUpMenu();
-
         setUpSuggestions();
     }
 
@@ -155,7 +158,6 @@ public class MainWindow extends Application implements Initializable {
 
         (new Thread(() -> {
             songNames = databaseHelper.getAllSongs();
-            System.out.println("loaded songs");
             selectionChanged();
         })).start();
 
@@ -264,4 +266,22 @@ public class MainWindow extends Application implements Initializable {
             FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         }
     }
+
+    @Override
+    public void movieEdited(Movie original, Movie edited) {
+        movieNames.remove(original.getName());
+
+        if (edited != null)
+            movieNames.add(edited.getName());
+
+        selectionChanged();
+    }
 }
+
+/*
+* Close windows wherever necessary
+* */
+
+/* Future
+*
+* */
