@@ -34,6 +34,7 @@ public class MainWindow extends Application implements Initializable {
     private DatabaseHelper databaseHelper = new DatabaseHelper();
     private ArrayList<String> songNames;
     private ArrayList<String> movieNames;
+    private ArrayList<String> artistNames;
 
     public static void main(String[] args) {
         launch(args);
@@ -114,11 +115,28 @@ public class MainWindow extends Application implements Initializable {
             stage.setScene(new Scene(root, 500, 500));
             stage.show();
         } else {
-            songs = databaseHelper.getSongsForMovie(searchName);
-            MovieSongsSearchResultsWindow.setSongs(songs);
-            root = FXMLLoader.load(getClass().getResource("MovieSongsSearchResultsWindow.fxml"));
+            songs = databaseHelper.getSongsForArtist(searchName);
+
+            if (songs == null) {
+                Utils.showError("Unable to get songs from database");
+                return;
+            }
+
+            if (songs.size() == 0) {
+                Utils.showInfo("No songs available");
+                return;
+            }
+
+            if (songs.get(0) == null) {
+                Utils.showError("Unexpected error occurred");
+                return;
+            }
+
+            ArtistSongsSearchResults.setSearchName(searchName);
+            ArtistSongsSearchResults.setSongs(songs);
+            root = FXMLLoader.load(getClass().getResource("ArtistSongsSearchResults.fxml"));
             stage = new Stage();
-            stage.setScene(new Scene(root, 500, 500));
+            stage.setScene(new Scene(root, 750, 500));
             stage.show();
         }
 
@@ -144,6 +162,11 @@ public class MainWindow extends Application implements Initializable {
 
         (new Thread(() -> {
             movieNames = databaseHelper.getAllMovies();
+            selectionChanged();
+        })).start();
+
+        (new Thread(() -> {
+            artistNames = databaseHelper.getAllArtists();
             selectionChanged();
         })).start();
     }
@@ -230,6 +253,9 @@ public class MainWindow extends Application implements Initializable {
         } else if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 1) {
             comboBoxSearch.getItems().clear();
             comboBoxSearch.getItems().addAll(movieNames);
+        }else {
+            comboBoxSearch.getItems().clear();
+            comboBoxSearch.getItems().addAll(artistNames);
         }
     }
 }

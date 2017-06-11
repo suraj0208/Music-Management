@@ -21,10 +21,10 @@ public class AddArtistWindow extends Application implements Initializable {
     @FXML
     private TextField txtFieldArtistName;
 
-    private static ArtistAdddedCallBack artistAdddedCallBack;
+    private static ArtistAddedCallBack artistAddedCallBack;
 
-    public static void setArtistAddedCallBack(ArtistAdddedCallBack artistAdddedCallBack) {
-        AddArtistWindow.artistAdddedCallBack = artistAdddedCallBack;
+    public static void setArtistAddedCallBack(ArtistAddedCallBack artistAddedCallBack) {
+        AddArtistWindow.artistAddedCallBack = artistAddedCallBack;
     }
 
     @Override
@@ -46,8 +46,8 @@ public class AddArtistWindow extends Application implements Initializable {
             Artist artist = new Artist(txtFieldArtistName.getText());
             new DatabaseHelper().addArtist(artist);
 
-            if (artistAdddedCallBack != null)
-                artistAdddedCallBack.artistAdded();
+            if (artistAddedCallBack != null)
+                artistAddedCallBack.artistAdded();
 
             ((Stage) (btnSaveArtist.getScene()).getWindow()).close();
         });

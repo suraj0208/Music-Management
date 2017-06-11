@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 8/6/17.
  */
-public class AddSongWIndow extends Application implements Initializable, ArtistAdddedCallBack {
+public class AddSongWIndow extends Application implements Initializable, ArtistAddedCallBack {
     @FXML
     private TextField txtFieldSongName;
 
@@ -108,8 +108,8 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
                 return;
             }
 
-            if (comboBoxArtist1.getValue() == null) {
-                Utils.showError("At least one artist is necessary");
+            if (comboBoxArtist1.getSelectionModel().getSelectedItem() == null) {
+                Utils.showError("Invalid Information");
                 return;
             }
 
@@ -185,6 +185,6 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
     }
 }
 
-interface ArtistAdddedCallBack {
+interface ArtistAddedCallBack {
     void artistAdded();
 }

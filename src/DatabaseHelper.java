@@ -217,6 +217,26 @@ public class DatabaseHelper {
         return null;
     }
 
+    public ArrayList<String> getAllArtists(){
+        try {
+
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT artist_name FROM Artists;");
+
+            ArrayList<String> artists = new ArrayList<>();
+
+            while (resultSet.next()){
+                artists.add(resultSet.getString(1));
+            }
+
+            return artists;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public ArrayList<String> getAllMovies(){
         try {
 
@@ -261,6 +281,79 @@ public class DatabaseHelper {
         }
 
         return null;
+    }
+
+    public ArrayList<Song> getSongsForArtist(String name){
+        HashMap<Integer, Song> currentHashMap = new HashMap<>();
+
+        try {
+
+            int id = getArtistId(name);
+
+            if(id==-1)
+                return null;
+
+            ResultSet resultSet = connection.createStatement().executeQuery(
+                    "SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = " +  id + ");" );
+
+
+            Movie previousMovie = null;
+
+            while (resultSet.next()) {
+
+                Song currentSong = currentHashMap.get(resultSet.getInt(1));
+
+                if (currentSong == null) {
+                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3));
+
+                    if (previousMovie != null) {
+                        if (currentSong.getMovieId() == previousMovie.getId()) {
+                            currentSong.setMovie(previousMovie);
+                        } else {
+                            previousMovie = new Movie();
+                            previousMovie.setId(resultSet.getInt(3));
+                            previousMovie.setName(resultSet.getString(4));
+                            previousMovie.setYear(resultSet.getInt(5));
+                            previousMovie.setRecordNo(resultSet.getInt(6));
+                            currentSong.setMovie(previousMovie);
+                        }
+
+                    } else if (previousMovie == null) {
+                        previousMovie = new Movie();
+                        previousMovie.setId(resultSet.getInt(3));
+                        previousMovie.setName(resultSet.getString(4));
+                        previousMovie.setYear(resultSet.getInt(5));
+                        previousMovie.setRecordNo(resultSet.getInt(6));
+                        currentSong.setMovie(previousMovie);
+                    }
+
+                    Artist artist = new Artist();
+                    artist.setId(resultSet.getInt(7));
+                    artist.setName(resultSet.getString(8));
+
+                    currentSong.addArtist(artist);
+                    currentHashMap.put(currentSong.getId(), currentSong);
+                } else {
+                    Artist artist = new Artist();
+                    artist.setId(resultSet.getInt(7));
+                    artist.setName(resultSet.getString(8));
+
+                    currentSong.addArtist(artist);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        ArrayList<Song> arrayList = new ArrayList<>();
+
+        for (Integer k : currentHashMap.keySet())
+            arrayList.add(currentHashMap.get(k));
+
+        return arrayList;
+
     }
 
     public ArrayList<Song> getSongsForMovie(String movieName) {
@@ -393,4 +486,22 @@ public class DatabaseHelper {
 
         return arrayList;
     }
+
+    public int getArtistId(String name){
+
+
+        ResultSet resultSet = null;
+        try {
+            resultSet = connection.createStatement().executeQuery("SELECT artist_id FROM Artists where artist_name like '%" + name + "%';");
+
+            if (resultSet.next())
+                return resultSet.getInt(1);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return  -1;
+    }
+
 }
