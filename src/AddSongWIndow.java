@@ -150,6 +150,8 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
             databaseHelper.addSong(song);
 
             txtFieldSongName.clear();
+
+            Utils.showInfo("Song added");
         });
     }
 

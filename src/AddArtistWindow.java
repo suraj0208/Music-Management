@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -6,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -37,20 +40,25 @@ public class AddArtistWindow extends Application implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        btnSaveArtist.setOnAction(e -> {
-            if (txtFieldArtistName.getText().length() == 0) {
-                Utils.showError("Invalid Input");
-                return;
-            }
-
-            Artist artist = new Artist(txtFieldArtistName.getText());
-            new DatabaseHelper().addArtist(artist);
-
-            if (artistAddedCallBack != null)
-                artistAddedCallBack.artistAdded();
-
-            ((Stage) (btnSaveArtist.getScene()).getWindow()).close();
+        btnSaveArtist.setOnAction(e -> addArtist());
+        txtFieldArtistName.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER) addArtist();
         });
 
+    }
+
+    public void addArtist(){
+        if (txtFieldArtistName.getText().length() == 0) {
+            Utils.showError("Invalid Input");
+            return;
+        }
+
+        Artist artist = new Artist(txtFieldArtistName.getText());
+        new DatabaseHelper().addArtist(artist);
+
+        if (artistAddedCallBack != null)
+            artistAddedCallBack.artistAdded();
+
+        ((Stage) (btnSaveArtist.getScene()).getWindow()).close();
     }
 }

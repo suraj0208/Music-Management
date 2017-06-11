@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -38,20 +39,25 @@ public class AddLanguageWindow extends Application implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        btnSaveLanguage.setOnAction(event -> {
-            if(txtFieldLanguageName.getText().length()==0){
-                Utils.showError("Invalid Input");
-                return;
-            }
-
-            Language language = new Language(txtFieldLanguageName.getText());
-            new DatabaseHelper().addLanguage(language);
-
-            if(languageAddedCallBack!=null)
-                languageAddedCallBack.languageAdded();
-
-            ((Stage)(btnSaveLanguage.getScene()).getWindow()).close();
-
+        btnSaveLanguage.setOnAction(event -> addLanguage());
+        txtFieldLanguageName.setOnKeyPressed(event ->{
+            if(event.getCode()== KeyCode.ENTER)
+                addLanguage();
         });
+    }
+
+    public void addLanguage(){
+        if(txtFieldLanguageName.getText().length()==0){
+            Utils.showError("Invalid Input");
+            return;
+        }
+
+        Language language = new Language(txtFieldLanguageName.getText());
+        new DatabaseHelper().addLanguage(language);
+
+        if(languageAddedCallBack!=null)
+            languageAddedCallBack.languageAdded();
+
+        ((Stage)(btnSaveLanguage.getScene()).getWindow()).close();
     }
 }
