@@ -1,9 +1,7 @@
-import java.security.Key;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.StringJoiner;
 
 /**
  * Created by suraj on 7/6/17.
@@ -97,8 +95,11 @@ public class DatabaseHelper {
 
             statement.executeUpdate(query);
 
-            ResultSet resultSet = connection.createStatement().executeQuery("SELECT song_id FROM " + DATABASE_SONGS_TABLE_NAME + " WHERE song_name ='" + song.getName() + "' AND movie_id = " + song.getMovieId() + ";");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT song_id FROM " + DATABASE_SONGS_TABLE_NAME + " WHERE song_name = ? AND movie_id = ?;");
+            preparedStatement.setString(1,song.getName());
+            preparedStatement.setInt(2,song.getMovieId());
 
+            ResultSet resultSet = preparedStatement.executeQuery();
             int songId = -1;
 
             if (resultSet.next()) {
@@ -262,9 +263,11 @@ public class DatabaseHelper {
     public Movie findMovie(String movieName) {
         try {
 
-            ResultSet resultSet = connection.createStatement().executeQuery(
-                    "SELECT movie_id, movie_name, movie_year, Movies.language_id, language_name, movie_record_no FROM "
-                            + DATABASE_MOVIES_TABLE_NAME + " INNER JOIN " + DATABASE_LANGUAGES_TABLE_NAME + " ON Movies.language_id = Languages.language_id where movie_name like '%" + movieName + "%';");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT movie_id, movie_name, movie_year, Movies.language_id, language_name, movie_record_no FROM "
+                            + DATABASE_MOVIES_TABLE_NAME + " INNER JOIN " + DATABASE_LANGUAGES_TABLE_NAME + " ON Movies.language_id = Languages.language_id where movie_name=?;");
+            preparedStatement.setString(1,movieName);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 Movie movie = new Movie();
@@ -295,9 +298,10 @@ public class DatabaseHelper {
             if (id == -1)
                 return null;
 
-            ResultSet resultSet = connection.createStatement().executeQuery(
-                    "SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = " + id + ");");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = ?);");
+            preparedStatement.setInt(1,id);
 
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             Movie previousMovie = null;
 
@@ -368,11 +372,14 @@ public class DatabaseHelper {
             return null;
         }
 
-        String query = "SELECT Songs.song_id, song_name, Artists.artist_id, artist_name FROM Movies INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Songs_Artists.artist_id=Artists.artist_id WHERE Movies.movie_id=" + movie.getId() + ";";
+        String query = "SELECT Songs.song_id, song_name, Artists.artist_id, artist_name FROM Movies INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Songs_Artists.artist_id=Artists.artist_id WHERE Movies.movie_id=?;";
 
 
         try {
-            ResultSet resultSet = connection.createStatement().executeQuery(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,movie.getId());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 int songId = resultSet.getInt(1);
@@ -413,8 +420,10 @@ public class DatabaseHelper {
         HashMap<Integer, Song> currentHashMap = new HashMap<>();
 
         try {
-            ResultSet resultSet = connection.createStatement().executeQuery(
-                    "SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_name LIKE '%" + songName + "%';");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_name = ?;");
+            preparedStatement.setString(1,songName);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             Movie previousMovie = null;
 
@@ -479,7 +488,9 @@ public class DatabaseHelper {
 
         ResultSet resultSet = null;
         try {
-            resultSet = connection.createStatement().executeQuery("SELECT artist_id FROM Artists where artist_name like '%" + name + "%';");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT artist_id FROM Artists where artist_name = ?;");
+            preparedStatement.setString(1,name);
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next())
                 return resultSet.getInt(1);
@@ -493,7 +504,7 @@ public class DatabaseHelper {
 
     public boolean deleteMovie(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("delete from Movies where movie_id=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("delete from Movies where movie_id=?;");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             return true;
@@ -507,7 +518,7 @@ public class DatabaseHelper {
 
     public boolean updateMovie(Movie movie) {
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE Movies SET movie_name=?,movie_year=?,language_id=?,movie_record_no=? where movie_id=?");
+            PreparedStatement statement = connection.prepareStatement("UPDATE Movies SET movie_name=?,movie_year=?,language_id=?,movie_record_no=? where movie_id=?;");
             statement.setString(1, movie.getName());
             statement.setInt(2, movie.getYear());
             statement.setInt(3, movie.getLanguageId());
@@ -526,11 +537,11 @@ public class DatabaseHelper {
     public boolean updateSong(Song song) {
         try {
 
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs_Artists WHERE song_id=?");
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs_Artists WHERE song_id=?;");
             statement.setInt(1, song.getId());
             statement.executeUpdate();
 
-            statement = connection.prepareStatement("UPDATE Songs SET song_name=?,movie_id=? where song_id=?");
+            statement = connection.prepareStatement("UPDATE Songs SET song_name=?,movie_id=? where song_id=?;");
 
             statement.setString(1, song.getName());
             statement.setInt(2, song.getMovieId());
@@ -551,7 +562,7 @@ public class DatabaseHelper {
 
     public boolean deleteSong(Song song) {
         try {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs WHERE song_id=?");
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs WHERE song_id=?;");
             statement.setInt(1, song.getId());
             statement.executeUpdate();
 
@@ -565,7 +576,7 @@ public class DatabaseHelper {
 
     public boolean updateArtist(Artist artist) {
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE Artists SET artist_name=? WHERE artist_id=?");
+            PreparedStatement statement = connection.prepareStatement("UPDATE Artists SET artist_name=? WHERE artist_id=?;");
             statement.setString(1, artist.getName());
             statement.setInt(2, artist.getId());
 
@@ -581,7 +592,7 @@ public class DatabaseHelper {
 
     public Artist getArtistFromName(String name) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Artists WHERE artist_name=?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Artists WHERE artist_name=?;");
             statement.setString(1, name);
 
             ResultSet resultSet = statement.executeQuery();
@@ -606,7 +617,7 @@ public class DatabaseHelper {
             if(songIdsForArtist==null)
                 return false;
 
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Artists WHERE artist_id=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Artists WHERE artist_id=?;");
             preparedStatement.setInt(1, artist.getId());
 
             preparedStatement.executeUpdate();
@@ -625,7 +636,7 @@ public class DatabaseHelper {
 
     private void deleteSong(int id) {
         try {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs WHERE song_id=?");
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs WHERE song_id=?;");
             statement.setInt(1, id);
             statement.executeUpdate();
 
@@ -636,7 +647,7 @@ public class DatabaseHelper {
 
     private ArrayList<Integer> getSongIdsForArtist(Artist artist) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT song_id FROM Songs_Artists WHERE artist_id=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT song_id FROM Songs_Artists WHERE artist_id=?;");
             preparedStatement.setInt(1, artist.getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
