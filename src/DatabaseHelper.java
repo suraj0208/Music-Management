@@ -198,12 +198,12 @@ public class DatabaseHelper {
         }
     }
 
-    public ArrayList<String> getAllSongs() {
+    public HashSet<String> getAllSongs() {
         try {
 
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT song_name FROM Songs;");
 
-            ArrayList<String> songs = new ArrayList<>();
+            HashSet<String> songs = new HashSet<>();
 
             while (resultSet.next()) {
                 songs.add(resultSet.getString(1));
@@ -218,12 +218,12 @@ public class DatabaseHelper {
         return null;
     }
 
-    public ArrayList<String> getAllArtists() {
+    public HashSet<String> getAllArtists() {
         try {
 
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT artist_name FROM Artists;");
 
-            ArrayList<String> artists = new ArrayList<>();
+            HashSet<String> artists = new HashSet<>();
 
             while (resultSet.next()) {
                 artists.add(resultSet.getString(1));

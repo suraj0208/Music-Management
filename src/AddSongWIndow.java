@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 /**
@@ -60,7 +61,7 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
 
     private static Song song;
 
-    private static ArrayList<SongEditedCallBack> songEditedCallBacks;
+    private static HashSet<SongEditedCallBack> songEditedCallBacks;
 
 
     @Override
@@ -106,7 +107,8 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
                 root = FXMLLoader.load(getClass().getResource("AddArtistWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
-                AddArtistWindow.setArtistAddedCallBack(this);
+                AddArtistWindow.addArtistAddedCallBack(this);
+                setupCloseActions();
                 stage.show();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -163,7 +165,16 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
 
             txtFieldSongName.clear();
 
+            for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
+                songEditedCallBack.songEdited(null, song);
+
             Utils.showInfo("Song Saved");
+        });
+    }
+
+    private void setupCloseActions() {
+        btnSaveSong.getScene().getWindow().setOnCloseRequest(event -> {
+            AddArtistWindow.removeArtistAddedCallBack(this);
         });
     }
 
@@ -280,7 +291,7 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
 
     public static void addSongEditedCallBack(SongEditedCallBack songEditedCallBack) {
         if (songEditedCallBacks == null)
-            songEditedCallBacks = new ArrayList<>();
+            songEditedCallBacks = new HashSet<>();
 
         songEditedCallBacks.add(songEditedCallBack);
     }

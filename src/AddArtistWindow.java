@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 /**
@@ -24,10 +25,20 @@ public class AddArtistWindow extends Application implements Initializable {
     @FXML
     private TextField txtFieldArtistName;
 
-    private static ArtistAddedCallBack artistAddedCallBack;
+    private static HashSet<ArtistAddedCallBack> artistAddedCallBacks;
 
-    public static void setArtistAddedCallBack(ArtistAddedCallBack artistAddedCallBack) {
-        AddArtistWindow.artistAddedCallBack = artistAddedCallBack;
+    public static void addArtistAddedCallBack(ArtistAddedCallBack artistAddedCallBack) {
+        if (artistAddedCallBacks == null)
+            artistAddedCallBacks = new HashSet<>();
+
+        artistAddedCallBacks.add(artistAddedCallBack);
+    }
+
+    public static void removeArtistAddedCallBack(ArtistAddedCallBack artistAddedCallBack) {
+        if (artistAddedCallBacks == null)
+            return;
+
+        artistAddedCallBacks.remove(artistAddedCallBack);
     }
 
     @Override
@@ -42,12 +53,12 @@ public class AddArtistWindow extends Application implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         btnSaveArtist.setOnAction(e -> addArtist());
         txtFieldArtistName.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.ENTER) addArtist();
+            if (event.getCode() == KeyCode.ENTER) addArtist();
         });
 
     }
 
-    public void addArtist(){
+    public void addArtist() {
         if (txtFieldArtistName.getText().length() == 0) {
             Utils.showError("Invalid Input");
             return;
@@ -56,8 +67,10 @@ public class AddArtistWindow extends Application implements Initializable {
         Artist artist = new Artist(txtFieldArtistName.getText());
         new DatabaseHelper().addArtist(artist);
 
-        if (artistAddedCallBack != null)
-            artistAddedCallBack.artistAdded();
+        if (artistAddedCallBacks != null)
+            for (ArtistAddedCallBack artistAddedCallBack : artistAddedCallBacks)
+                if (artistAddedCallBack != null)
+                    artistAddedCallBack.artistAdded();
 
         ((Stage) (btnSaveArtist.getScene()).getWindow()).close();
     }

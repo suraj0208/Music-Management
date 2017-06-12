@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 /**
@@ -49,7 +50,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     private static Movie movie;
 
-    private static ArrayList<MovieEditedCallBack> movieEditedCallBacks;
+    private static HashSet<MovieEditedCallBack> movieEditedCallBacks;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -127,6 +128,11 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                 clearFields();
 
                 Utils.showInfo("Movie Saved");
+
+                for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
+                    if (movieEditedCallBack != null)
+                        movieEditedCallBack.movieEdited(null, movie);
+
                 closeWindow();
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -212,7 +218,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     public static void addMovieEditedCallBack(MovieEditedCallBack movieEditedCallBack) {
         if (movieEditedCallBacks == null)
-            movieEditedCallBacks = new ArrayList<>();
+            movieEditedCallBacks = new HashSet<>();
 
         AddMovieWindow.movieEditedCallBacks.add(movieEditedCallBack);
     }

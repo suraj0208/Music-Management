@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 7/6/17.
  */
-public class MainWindow extends Application implements Initializable, MovieEditedCallBack, SongEditedCallBack {
+public class MainWindow extends Application implements Initializable, MovieEditedCallBack, SongEditedCallBack, ArtistAddedCallBack {
     @FXML
     private Button btnSearch;
 
@@ -33,9 +33,9 @@ public class MainWindow extends Application implements Initializable, MovieEdite
     private MenuBar menuBar;
 
     private DatabaseHelper databaseHelper = new DatabaseHelper();
-    private ArrayList<String> songNames;
+    private HashSet<String> songNames;
     private HashSet<String> movieNames;
-    private ArrayList<String> artistNames;
+    private HashSet<String> artistNames;
 
     public static void main(String[] args) {
         launch(args);
@@ -84,7 +84,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             }
 
             AddSongWIndow.addSongEditedCallBack(this);
-            (btnSearch.getScene()).getWindow().setOnCloseRequest(event -> AddSongWIndow.removeSongEditedCallBack(this));
+            setupCloseActions();
 
             SongsSearchResultWindow.setSongs(songs);
             SongsSearchResultWindow.setSearchName(searchName);
@@ -103,16 +103,11 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             if (songs.size() == 0) {
                 Utils.showInfo("No songs available");
-                return;
             }
 
-            if (songs.get(0) == null) {
-                Utils.showError("Unexpected error occurred");
-                return;
-            }
-
+            MovieSongsSearchResultsWindow.setMovie(databaseHelper.findMovie(searchName));
             AddMovieWindow.addMovieEditedCallBack(this);
-            (btnSearch.getScene()).getWindow().setOnCloseRequest(event -> AddMovieWindow.removeMovieEditedCallBack(this));
+            setupCloseActions();
 
             MovieSongsSearchResultsWindow.setSongs(songs);
             root = FXMLLoader.load(getClass().getResource("MovieSongsSearchResultsWindow.fxml"));
@@ -147,6 +142,14 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             stage.show();
         }
 
+    }
+
+    private void setupCloseActions() {
+        (btnSearch.getScene()).getWindow().setOnCloseRequest(event -> {
+            AddSongWIndow.removeSongEditedCallBack(this);
+            AddMovieWindow.removeMovieEditedCallBack(this);
+            AddArtistWindow.removeArtistAddedCallBack(this);
+        });
     }
 
     @Override
@@ -190,6 +193,8 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addArtistMenuItem.setOnAction(e -> {
             Parent root = null;
             try {
+                AddArtistWindow.addArtistAddedCallBack(this);
+                setupCloseActions();
                 root = FXMLLoader.load(getClass().getResource("AddArtistWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
@@ -210,6 +215,9 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             Parent root = null;
             try {
                 AddSongWIndow.setSong(null);
+                AddSongWIndow.addSongEditedCallBack(this);
+                setupCloseActions();
+
                 root = FXMLLoader.load(getClass().getResource("AddSongWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 400));
@@ -230,6 +238,8 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             Parent root = null;
             try {
                 AddMovieWindow.setMovie(null);
+                AddMovieWindow.addMovieEditedCallBack(this);
+                setupCloseActions();
                 root = FXMLLoader.load(getClass().getResource("AddMovieWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 300));
@@ -257,39 +267,63 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 0) {
             if (comboBoxSearch.getItems().size() > 0)
                 comboBoxSearch.getItems().clear();
-            comboBoxSearch.getItems().addAll(songNames);
+
+            if (songNames != null)
+                comboBoxSearch.getItems().addAll(songNames);
             FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         } else if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 1) {
             if (comboBoxSearch.getItems().size() > 0)
                 comboBoxSearch.getItems().clear();
-            comboBoxSearch.getItems().addAll(movieNames);
+
+            if (movieNames != null)
+                comboBoxSearch.getItems().addAll(movieNames);
             FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         } else {
             if (comboBoxSearch.getItems().size() > 0)
                 comboBoxSearch.getItems().clear();
-            comboBoxSearch.getItems().addAll(artistNames);
+
+            if (artistNames != null)
+                comboBoxSearch.getItems().addAll(artistNames);
             FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         }
     }
 
     @Override
     public void movieEdited(Movie original, Movie edited) {
-        movieNames.remove(original.getName());
+        if (original != null) {
+            movieNames.remove(original.getName());
+            selectionChanged();
+        }
 
-        if (edited != null)
+        if (edited != null) {
             movieNames.add(edited.getName());
+            selectionChanged();
+        } else {
+            (new Thread(() -> {
+                songNames = databaseHelper.getAllSongs();
+                selectionChanged();
+            })).start();
+        }
 
-        selectionChanged();
     }
 
     @Override
     public void songEdited(Song original, Song edited) {
-        songNames.remove(original.getName());
+        if (original != null)
+            songNames.remove(original.getName());
 
         if (edited != null)
             songNames.add(edited.getName());
 
         selectionChanged();
+    }
+
+    @Override
+    public void artistAdded() {
+        (new Thread(() -> {
+            artistNames = databaseHelper.getAllArtists();
+            selectionChanged();
+        })).start();
     }
 }
 

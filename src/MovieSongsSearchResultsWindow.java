@@ -45,6 +45,10 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     private static ArrayList<Song> songs;
 
+    public static void setMovie(Movie movie) {
+        MovieSongsSearchResultsWindow.movie = movie;
+    }
+
     private static Movie movie;
 
     public static void setSongs(ArrayList<Song> songs) {
@@ -61,7 +65,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        movie = songs.get(0).getMovie();
+        //movie = songs.get(0).getMovie();
         setMovieDetails();
         setSongsTable();
         setupEditButton();
@@ -73,7 +77,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     private void setupEditButton() {
         btnEditMovie.setOnAction(e -> {
-            AddMovieWindow.setMovie(songs.get(0).getMovie());
+            AddMovieWindow.setMovie(movie);
             Parent root = null;
             try {
                 AddMovieWindow.addMovieEditedCallBack(this);
