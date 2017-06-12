@@ -65,7 +65,11 @@ public class AddArtistWindow extends Application implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         txtFieldArtistName.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) addArtist();
+            if (event.getCode() == KeyCode.ENTER) btnSaveArtist.fire();
+        });
+
+        btnSaveArtist.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) btnSaveArtist.fire();
         });
 
         if (artist != null) {

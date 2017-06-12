@@ -86,6 +86,16 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
                 btnSaveSong.fire();
         });
 
+        btnSaveSong.setOnKeyPressed(event -> {
+            if(event.getCode()==KeyCode.ENTER)
+                btnSaveSong.fire();
+        });
+
+        btnDeleteSong.setOnKeyPressed(event -> {
+            if(event.getCode()==KeyCode.ENTER)
+                btnDeleteSong.fire();
+        });
+
         (new Thread(() -> {
             final ArrayList<Movie> movieArrayList = databaseHelper.getAvailableMovies();
 

@@ -68,6 +68,16 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                 btnSaveMovie.fire();
         });
 
+        btnSaveMovie.setOnKeyPressed(event -> {
+            if(event.getCode()==KeyCode.ENTER)
+                btnSaveMovie.fire();
+        });
+
+        btnDeleteMovie.setOnKeyPressed(event -> {
+            if(event.getCode()==KeyCode.ENTER)
+                btnDeleteMovie.fire();
+        });
+
         btnAddNewLanguage.setOnAction(e -> {
             Parent root = null;
             try {

@@ -44,6 +44,11 @@ public class AddLanguageWindow extends Application implements Initializable {
             if(event.getCode()== KeyCode.ENTER)
                 addLanguage();
         });
+
+        btnSaveLanguage.setOnKeyPressed(event ->{
+            if(event.getCode()==KeyCode.ENTER)
+                btnSaveLanguage.fire();
+        });
     }
 
     public void addLanguage(){

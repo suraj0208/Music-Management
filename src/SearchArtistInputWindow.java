@@ -45,6 +45,11 @@ public class SearchArtistInputWindow extends Application implements Initializabl
                 btnSearchArtist.fire();
         });
 
+        btnSearchArtist.setOnKeyPressed(event -> {
+            if(event.getCode()==KeyCode.ENTER)
+                btnSearchArtist.fire();
+        });
+
         FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearchName,(typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || typedText.toLowerCase().equals(objectToCompare.toLowerCase()));
 
         btnSearchArtist.setOnAction(event -> {
