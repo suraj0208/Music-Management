@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -38,6 +39,11 @@ public class SearchArtistInputWindow extends Application implements Initializabl
         HashSet<String> artists = databaseHelper.getAllArtists();
 
         comboBoxSearchName.getItems().addAll(artists);
+
+        comboBoxSearchName.setOnKeyPressed(event -> {
+            if(event.getCode()== KeyCode.ENTER)
+                btnSearchArtist.fire();
+        });
 
         FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearchName,(typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || typedText.toLowerCase().equals(objectToCompare.toLowerCase()));
 

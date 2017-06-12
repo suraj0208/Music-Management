@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -73,8 +74,17 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         AddArtistWindow.addArtistAddedCallBack(this);
+
+        comboBoxArtist1.setOnKeyPressed(event -> {
+            if(event.getCode()== KeyCode.ENTER)
+                btnSaveSong.fire();
+        });
+
+        comboBoxArtist4.setOnKeyPressed(event -> {
+            if(event.getCode()==KeyCode.ENTER)
+                btnSaveSong.fire();
+        });
 
         (new Thread(() -> {
             final ArrayList<Movie> movieArrayList = databaseHelper.getAvailableMovies();

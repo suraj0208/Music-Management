@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -62,6 +63,10 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        txtFieldRecordNo.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER)
+                btnSaveMovie.fire();
+        });
 
         btnAddNewLanguage.setOnAction(e -> {
             Parent root = null;
@@ -90,7 +95,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
             lblAddMovieWindowTitle.setText("Edit Movie Details");
 
             btnDeleteMovie.setOnAction(e -> {
-                if(!Utils.confirmDialog("Do you want to delete this movie and all its songs?"))
+                if (!Utils.confirmDialog("Do you want to delete this movie and all its songs?"))
                     return;
 
                 if (databaseHelper.deleteMovie(movie.getId())) {
@@ -109,16 +114,16 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                 if (!prepareMovie())
                     return;
 
-                if(!Utils.confirmDialog("Do you want to save the changes?"))
+                if (!Utils.confirmDialog("Do you want to save the changes?"))
                     return;
 
                 if (databaseHelper.updateMovie(movie)) {
                     Utils.showInfo("Movie Saved");
                     closeWindow();
 
-                    if(movieEditedCallBacks !=null)
+                    if (movieEditedCallBacks != null)
                         for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
-                            if(movieEditedCallBack!=null)
+                            if (movieEditedCallBack != null)
                                 movieEditedCallBack.movieEdited(originalMovie, movie);
                 }
             });
