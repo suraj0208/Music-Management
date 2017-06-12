@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.scene.image.Image?>
 <BorderPane prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="SongsSearchResultWindow">
   <center>
     <TableView fx:id="tblSearchResults" prefHeight="200.0" prefWidth="200.0">
@@ -14,6 +15,9 @@
       </BorderPane.margin>
     </TableView>
   </center>
+
+
+
   <top>
     <Label fx:id="lblSearchSongName" text="Search Results" BorderPane.alignment="CENTER">
       <font>

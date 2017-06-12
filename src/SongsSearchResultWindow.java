@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,11 +15,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -26,13 +30,13 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 8/6/17.
  */
-public class SongsSearchResultWindow extends Application implements Initializable {
+public class SongsSearchResultWindow extends Application implements Initializable, SongEditedCallBack {
 
     @FXML
-    private  Label lblSearchSongName;
+    private Label lblSearchSongName;
 
     @FXML
-    private  TableView<Song> tblSearchResults;
+    private TableView<Song> tblSearchResults;
 
     private static ArrayList<Song> songs;
 
@@ -126,6 +130,48 @@ public class SongsSearchResultWindow extends Application implements Initializabl
 
         tblSearchResults.setItems(songObservableList);
 
+        tblSearchResults.setRowFactory(tv -> {
+            TableRow<Song> tableRow = new TableRow<>();
+            tableRow.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && tableRow.getItem() != null) {
+                    AddSongWIndow.setSong(tableRow.getItem());
+
+                    Parent root = null;
+                    try {
+                        AddSongWIndow.addSongEditedCallBack(this);
+
+                        (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
+                            AddSongWIndow.removeSongEditedCallBack(this);
+                        });
+
+                        root = FXMLLoader.load(getClass().getResource("AddSongWindow.fxml"));
+                        Stage stage = new Stage();
+                        stage.setScene(new Scene(root, 500, 400));
+                        stage.show();
+
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+            });
+            return tableRow;
+        });
     }
 
+    @Override
+    public void songEdited(Song original, Song edited) {
+        for (Song song : tblSearchResults.getItems())
+            if (song.getId() == original.getId()) {
+                tblSearchResults.getItems().remove(song);
+                break;
+            }
+
+        if (edited != null)
+            tblSearchResults.getItems().add(edited);
+    }
+}
+
+interface SongEditedCallBack {
+    void songEdited(Song original, Song edited);
 }

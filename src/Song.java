@@ -28,6 +28,13 @@ public class Song {
         this.artists = artists;
     }
 
+    public Song(int id, String name, int movieId, ArrayList<Artist> artists) {
+        this.id=id;
+        this.name=name;
+        this.movieId=movieId;
+        this.artists=artists;
+    }
+
     public int getId() {
         return id;
     }

@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -43,10 +44,23 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
     @FXML
     private Button btnSaveSong;
 
+    @FXML
+    private Button btnDeleteSong;
+
+    @FXML
+    private Label lblNewSong;
+
     private DatabaseHelper databaseHelper = new DatabaseHelper();
+
     private HashMap<String, Movie> stringMovieHashMap = new HashMap<>();
+
     private ArrayList<Artist> artists;
+
     private HashMap<String, Artist> stringArtistHashMap = new HashMap<>();
+
+    private static Song song;
+
+    private static ArrayList<SongEditedCallBack> songEditedCallBacks;
 
 
     @Override
@@ -67,22 +81,24 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
 
 
         (new Thread(() -> {
-            ArrayList<Movie> movieArrayList = databaseHelper.getAvailableMovies();
+            final ArrayList<Movie> movieArrayList = databaseHelper.getAvailableMovies();
 
             (new Thread(() -> {
                 for (Movie movie : movieArrayList)
                     comboBoxMovies.getItems().add(movie.getName());
+
+                addArtistsToComboBox();
+                loadSongDetailsIfAvailable();
+
             })).start();
 
             (new Thread(() -> {
-                ArrayList<Movie> movieArrayList1 = databaseHelper.getAvailableMovies();
-                for (Movie movie : movieArrayList1)
+                for (Movie movie : movieArrayList)
                     stringMovieHashMap.put(movie.getName(), movie);
             })).start();
 
         })).start();
 
-        addArtistsToComboBox();
 
         btnAddNewArtist.setOnAction(e -> {
             Parent root = null;
@@ -97,66 +113,142 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
             }
         });
 
+        if (song != null) {
+            lblNewSong.setText("Edit Song");
+            final Song originalSong = song;
+
+            btnDeleteSong.setOnAction(event -> {
+
+                if (databaseHelper.deleteSong(song)) {
+                    Utils.showInfo("Song Deleted");
+
+                    for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
+                        songEditedCallBack.songEdited(originalSong, null);
+
+                    closeWindow();
+                } else {
+                    Utils.showError("Error Occurred");
+                }
+
+            });
+
+            btnSaveSong.setOnAction(e -> {
+                if (!prepareSong())
+                    return;
+
+                if (databaseHelper.updateSong(song)) {
+                    Utils.showInfo("Song Saved");
+
+                    for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
+                        songEditedCallBack.songEdited(originalSong, song);
+
+                    closeWindow();
+                } else {
+                    Utils.showError("Error Occurred");
+                }
+
+            });
+
+            return;
+        }
+
+        btnDeleteSong.setVisible(false);
+
+
         btnSaveSong.setOnAction(e -> {
-            if (txtFieldSongName.getText().length() == 0) {
-                Utils.showError("Fill required fields");
+            if (!prepareSong())
                 return;
-            }
-
-            if (comboBoxMovies.getValue().length() == 0) {
-                Utils.showError("Fill required fields");
-                return;
-            }
-
-            if (comboBoxArtist1.getSelectionModel().getSelectedItem() == null) {
-                Utils.showError("Invalid Information");
-                return;
-            }
-
-            Movie movie = stringMovieHashMap.get(comboBoxMovies.getValue());
-
-            if (movie == null) {
-                Utils.showError("No such movie");
-                return;
-            }
-
-            String artist1 = comboBoxArtist1.getValue();
-            String artist2 = comboBoxArtist2.getValue();
-            String artist3 = comboBoxArtist3.getValue();
-            String artist4 = comboBoxArtist4.getValue();
-
-
-            if (!doesArtistExist(artist1) || !doesArtistExist(artist2) || !doesArtistExist(artist3) || !doesArtistExist(artist4)) {
-                Utils.showError("Artist(s) does not exist");
-                return;
-            }
-
-            ArrayList<Artist> currentArtists = new ArrayList<>();
-
-            if (stringArtistHashMap.containsKey(artist1))
-                currentArtists.add(stringArtistHashMap.get(artist1));
-
-            if (stringArtistHashMap.containsKey(artist2))
-                currentArtists.add(stringArtistHashMap.get(artist2));
-
-            if (stringArtistHashMap.containsKey(artist3))
-                currentArtists.add(stringArtistHashMap.get(artist3));
-
-            if (stringArtistHashMap.containsKey(artist4))
-                currentArtists.add(stringArtistHashMap.get(artist4));
-
-            Song song = new Song(txtFieldSongName.getText(), movie.getId(), currentArtists);
 
             databaseHelper.addSong(song);
 
             txtFieldSongName.clear();
 
-            Utils.showInfo("Song added");
+            Utils.showInfo("Song Saved");
         });
     }
 
+    private void closeWindow() {
+        ((Stage) (btnSaveSong.getScene()).getWindow()).close();
+    }
+
+    private void loadSongDetailsIfAvailable() {
+        if (song != null) {
+            txtFieldSongName.setText(song.getName());
+            comboBoxMovies.setValue(song.getMovie().getName());
+
+            ComboBox[] stringComboBoxes = new ComboBox[]{comboBoxArtist1, comboBoxArtist2, comboBoxArtist3, comboBoxArtist4};
+
+            for (int i = 0; i < stringComboBoxes.length && i < song.getArtists().size(); i++)
+                if (stringComboBoxes[i] != null)
+                    stringComboBoxes[i].setValue(song.getArtists().get(i).getName());
+
+        }
+    }
+
+    private boolean prepareSong() {
+        if (txtFieldSongName.getText().length() == 0) {
+            Utils.showError("Fill required fields");
+            return false;
+        }
+
+        if (comboBoxMovies.getValue().length() == 0) {
+            Utils.showError("Fill required fields");
+            return false;
+        }
+
+        if (comboBoxArtist1.getSelectionModel().getSelectedItem() == null) {
+            Utils.showError("Invalid Information");
+            return false;
+        }
+
+        Movie movie = stringMovieHashMap.get(comboBoxMovies.getValue());
+
+        if (movie == null) {
+            Utils.showError("No such movie");
+            return false;
+        }
+
+        String artist1 = comboBoxArtist1.getValue();
+        String artist2 = comboBoxArtist2.getValue();
+        String artist3 = comboBoxArtist3.getValue();
+        String artist4 = comboBoxArtist4.getValue();
+
+
+        if (!doesArtistExist(artist1) || !doesArtistExist(artist2) || !doesArtistExist(artist3) || !doesArtistExist(artist4)) {
+            Utils.showError("Artist(s) does not exist");
+            return false;
+        }
+
+        ArrayList<Artist> currentArtists = new ArrayList<>();
+
+        if (stringArtistHashMap.containsKey(artist1))
+            currentArtists.add(stringArtistHashMap.get(artist1));
+
+        if (stringArtistHashMap.containsKey(artist2))
+            currentArtists.add(stringArtistHashMap.get(artist2));
+
+        if (stringArtistHashMap.containsKey(artist3))
+            currentArtists.add(stringArtistHashMap.get(artist3));
+
+        if (stringArtistHashMap.containsKey(artist4))
+            currentArtists.add(stringArtistHashMap.get(artist4));
+
+        if (song != null) {
+            song = new Song(song.getId(), txtFieldSongName.getText(), movie.getId(), currentArtists);
+            song.setMovie(movie);
+            return true;
+        }
+        song = new Song(txtFieldSongName.getText(), movie.getId(), currentArtists);
+        song.setMovie(movie);
+        return true;
+    }
+
+    public static void setSong(Song song) {
+        AddSongWIndow.song = song;
+    }
+
     private boolean doesArtistExist(String artist1) {
-        if (artist1 == null)
+        if (artist1 == null || artist1.length() == 0)
             return true;
 
         return stringArtistHashMap.containsKey(artist1);
@@ -185,6 +277,21 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
             stringArtistHashMap.put(artist.getName(), artist);
         }
     }
+
+    public static void addSongEditedCallBack(SongEditedCallBack songEditedCallBack) {
+        if (songEditedCallBacks == null)
+            songEditedCallBacks = new ArrayList<>();
+
+        songEditedCallBacks.add(songEditedCallBack);
+    }
+
+    public static void removeSongEditedCallBack(SongEditedCallBack songEditedCallBack) {
+        if (songEditedCallBacks == null)
+            return;
+
+        songEditedCallBacks.remove(songEditedCallBack);
+    }
+
 }
 
 interface ArtistAddedCallBack {

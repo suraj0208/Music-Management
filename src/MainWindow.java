@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 7/6/17.
  */
-public class MainWindow extends Application implements Initializable, MovieEditedCallBack {
+public class MainWindow extends Application implements Initializable, MovieEditedCallBack, SongEditedCallBack {
     @FXML
     private Button btnSearch;
 
@@ -82,6 +82,9 @@ public class MainWindow extends Application implements Initializable, MovieEdite
                 Utils.showError("Unexpected error occurred");
                 return;
             }
+
+            AddSongWIndow.addSongEditedCallBack(this);
+            (btnSearch.getScene()).getWindow().setOnCloseRequest(event -> AddSongWIndow.removeSongEditedCallBack(this));
 
             SongsSearchResultWindow.setSongs(songs);
             SongsSearchResultWindow.setSearchName(searchName);
@@ -182,9 +185,9 @@ public class MainWindow extends Application implements Initializable, MovieEdite
     private void setUpArtistMenu() {
         Menu menuSong = menuBar.getMenus().get(2);
 
-        MenuItem addSongMenuItem = menuSong.getItems().get(0);
+        MenuItem addArtistMenuItem = menuSong.getItems().get(0);
 
-        addSongMenuItem.setOnAction(e -> {
+        addArtistMenuItem.setOnAction(e -> {
             Parent root = null;
             try {
                 root = FXMLLoader.load(getClass().getResource("AddArtistWindow.fxml"));
@@ -206,6 +209,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addSongMenuItem.setOnAction(e -> {
             Parent root = null;
             try {
+                AddSongWIndow.setSong(null);
                 root = FXMLLoader.load(getClass().getResource("AddSongWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 400));
@@ -225,6 +229,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addMovieMenuItem.setOnAction(e -> {
             Parent root = null;
             try {
+                AddMovieWindow.setMovie(null);
                 root = FXMLLoader.load(getClass().getResource("AddMovieWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 300));
@@ -273,6 +278,16 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
         if (edited != null)
             movieNames.add(edited.getName());
+
+        selectionChanged();
+    }
+
+    @Override
+    public void songEdited(Song original, Song edited) {
+        songNames.remove(original.getName());
+
+        if (edited != null)
+            songNames.add(edited.getName());
 
         selectionChanged();
     }

@@ -198,14 +198,14 @@ public class DatabaseHelper {
         }
     }
 
-    public ArrayList<String> getAllSongs(){
+    public ArrayList<String> getAllSongs() {
         try {
 
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT song_name FROM Songs;");
 
             ArrayList<String> songs = new ArrayList<>();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 songs.add(resultSet.getString(1));
             }
 
@@ -218,14 +218,14 @@ public class DatabaseHelper {
         return null;
     }
 
-    public ArrayList<String> getAllArtists(){
+    public ArrayList<String> getAllArtists() {
         try {
 
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT artist_name FROM Artists;");
 
             ArrayList<String> artists = new ArrayList<>();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 artists.add(resultSet.getString(1));
             }
 
@@ -238,14 +238,14 @@ public class DatabaseHelper {
         return null;
     }
 
-    public HashSet<String> getAllMovies(){
+    public HashSet<String> getAllMovies() {
         try {
 
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT movie_name FROM Movies;");
 
             HashSet<String> movies = new HashSet<>();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 movies.add(resultSet.getString(1));
             }
 
@@ -284,18 +284,18 @@ public class DatabaseHelper {
         return null;
     }
 
-    public ArrayList<Song> getSongsForArtist(String name){
+    public ArrayList<Song> getSongsForArtist(String name) {
         HashMap<Integer, Song> currentHashMap = new HashMap<>();
 
         try {
 
             int id = getArtistId(name);
 
-            if(id==-1)
+            if (id == -1)
                 return null;
 
             ResultSet resultSet = connection.createStatement().executeQuery(
-                    "SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = " +  id + ");" );
+                    "SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = " + id + ");");
 
 
             Movie previousMovie = null;
@@ -473,7 +473,7 @@ public class DatabaseHelper {
         return arrayList;
     }
 
-    public int getArtistId(String name){
+    public int getArtistId(String name) {
 
 
         ResultSet resultSet = null;
@@ -487,13 +487,13 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
 
-        return  -1;
+        return -1;
     }
 
     public boolean deleteMovie(int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("delete from Movies where movie_id=?");
-            preparedStatement.setInt(1,id);
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             return true;
 
@@ -507,13 +507,54 @@ public class DatabaseHelper {
     public boolean updateMovie(Movie movie) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE Movies SET movie_name=?,movie_year=?,language_id=?,movie_record_no=? where movie_id=?");
-            statement.setString(1,movie.getName());
-            statement.setInt(2,movie.getYear());
-            statement.setInt(3,movie.getLanguageId());
-            statement.setInt(4,movie.getRecordNo());
-            statement.setInt(5,movie.getId());
+            statement.setString(1, movie.getName());
+            statement.setInt(2, movie.getYear());
+            statement.setInt(3, movie.getLanguageId());
+            statement.setInt(4, movie.getRecordNo());
+            statement.setInt(5, movie.getId());
 
             statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean updateSong(Song song) {
+        try {
+
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs_Artists WHERE song_id=?");
+            statement.setInt(1, song.getId());
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement("UPDATE Songs SET song_name=?,movie_id=? where song_id=?");
+
+            statement.setString(1, song.getName());
+            statement.setInt(2, song.getMovieId());
+            statement.setInt(3, song.getId());
+            statement.executeUpdate();
+
+            for (Artist artist : song.getArtists())
+                addSongArtistRelation(song, artist);
+
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean deleteSong(Song song) {
+        try {
+
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs WHERE song_id=?");
+            statement.setInt(1, song.getId());
+            statement.executeUpdate();
+
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

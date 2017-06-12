@@ -49,14 +49,6 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     private static Movie movie;
 
-    public static Movie getMovie() {
-        return movie;
-    }
-
-    public static void setMovie(Movie movie) {
-        AddMovieWindow.movie = movie;
-    }
-
     private static ArrayList<MovieEditedCallBack> movieEditedCallBacks;
 
     @Override
@@ -77,8 +69,8 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                 stage.setScene(new Scene(root, 500, 200));
 
                 AddLanguageWindow.setLanguageAddedCallBack(this);
-
                 stage.show();
+
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -87,7 +79,6 @@ public class AddMovieWindow extends Application implements Initializable, Langua
         addLanguagesToComboBox();
 
         if (movie != null) {
-
             final Movie originalMovie = movie;
 
             txtFieldMovieName.setText(movie.getName());
@@ -115,7 +106,6 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
                 if (databaseHelper.updateMovie(movie)) {
                     Utils.showInfo("Movie Saved");
-                    clearFields();
                     closeWindow();
 
                     for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
@@ -134,7 +124,6 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                     return;
 
                 databaseHelper.addMovie(movie);
-                System.out.println(movie.getId());
                 clearFields();
 
                 Utils.showInfo("Movie Saved");
@@ -150,6 +139,14 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     private void closeWindow() {
         ((Stage) (btnSaveMovie.getScene()).getWindow()).close();
+    }
+
+    public static Movie getMovie() {
+        return movie;
+    }
+
+    public static void setMovie(Movie movie) {
+        AddMovieWindow.movie = movie;
     }
 
     private void clearFields() {

@@ -7,10 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -23,7 +20,7 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 8/6/17.
  */
-public class MovieSongsSearchResultsWindow extends Application implements Initializable, MovieEditedCallBack {
+public class MovieSongsSearchResultsWindow extends Application implements Initializable, MovieEditedCallBack, SongEditedCallBack {
 
     @FXML
     private Label lblMovieName;
@@ -129,6 +126,34 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
         tblSearchResults.setItems(songObservableList);
 
+        tblSearchResults.setRowFactory(tv -> {
+            TableRow<Song> tableRow = new TableRow<>();
+            tableRow.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && tableRow.getItem() != null) {
+                    AddSongWIndow.setSong(tableRow.getItem());
+
+                    Parent root = null;
+                    try {
+                        AddSongWIndow.addSongEditedCallBack(this);
+
+                        (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
+                            AddSongWIndow.removeSongEditedCallBack(this);
+                        });
+
+                        root = FXMLLoader.load(getClass().getResource("AddSongWindow.fxml"));
+                        Stage stage = new Stage();
+                        stage.setScene(new Scene(root, 500, 400));
+                        stage.show();
+
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+            });
+            return tableRow;
+        });
+
     }
 
     private void setMovieDetails() {
@@ -152,6 +177,17 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
         ((Stage) (btnEditMovie.getScene()).getWindow()).close();
     }
 
+    @Override
+    public void songEdited(Song original, Song edited) {
+        for (Song song : tblSearchResults.getItems())
+            if (song.getId() == original.getId()) {
+                tblSearchResults.getItems().remove(song);
+                break;
+            }
+
+        if (edited != null)
+            tblSearchResults.getItems().add(edited);
+    }
 }
 
 interface MovieEditedCallBack {
