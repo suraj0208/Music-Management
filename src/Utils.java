@@ -40,4 +40,15 @@ public class Utils {
 //      dialog.setScene(scene);
 //      dialog.show();
     }
+
+    public static boolean confirmDialog(String msg) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, msg, ButtonType.YES, ButtonType.CANCEL);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            return true;
+        }
+
+        return false;
+    }
 }

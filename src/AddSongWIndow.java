@@ -63,7 +63,6 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
 
     private static HashSet<SongEditedCallBack> songEditedCallBacks;
 
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("AddSongWindow.fxml"));
@@ -74,12 +73,8 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FxUtilTest.autoCompleteComboBoxPlus(comboBoxMovies, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
-        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist1, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
-        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist2, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
-        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist3, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
-        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist4, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
 
+        AddArtistWindow.addArtistAddedCallBack(this);
 
         (new Thread(() -> {
             final ArrayList<Movie> movieArrayList = databaseHelper.getAvailableMovies();
@@ -107,7 +102,6 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
                 root = FXMLLoader.load(getClass().getResource("AddArtistWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
-                AddArtistWindow.addArtistAddedCallBack(this);
                 setupCloseActions();
                 stage.show();
             } catch (IOException e1) {
@@ -120,12 +114,16 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
             final Song originalSong = song;
 
             btnDeleteSong.setOnAction(event -> {
+                if (!Utils.confirmDialog("Do you want to delete this song?"))
+                    return;
 
                 if (databaseHelper.deleteSong(song)) {
                     Utils.showInfo("Song Deleted");
 
-                    for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
-                        songEditedCallBack.songEdited(originalSong, null);
+                    if (songEditedCallBacks != null)
+                        for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
+                            if (songEditedCallBack != null)
+                                songEditedCallBack.songEdited(originalSong, null);
 
                     closeWindow();
                 } else {
@@ -135,14 +133,19 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
             });
 
             btnSaveSong.setOnAction(e -> {
+                if (!Utils.confirmDialog("Do you want to save the changes?"))
+                    return;
+
                 if (!prepareSong())
                     return;
 
                 if (databaseHelper.updateSong(song)) {
                     Utils.showInfo("Song Saved");
 
-                    for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
-                        songEditedCallBack.songEdited(originalSong, song);
+                    if (songEditedCallBacks != null)
+                        for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
+                            if (songEditedCallBack != null)
+                                songEditedCallBack.songEdited(originalSong, song);
 
                     closeWindow();
                 } else {
@@ -287,6 +290,13 @@ public class AddSongWIndow extends Application implements Initializable, ArtistA
             comboBoxArtist4.getItems().add(artist.getName());
             stringArtistHashMap.put(artist.getName(), artist);
         }
+
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxMovies, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist1, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist2, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist3, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxArtist4, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
+
     }
 
     public static void addSongEditedCallBack(SongEditedCallBack songEditedCallBack) {

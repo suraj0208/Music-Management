@@ -83,7 +83,6 @@ public class MainWindow extends Application implements Initializable, MovieEdite
                 return;
             }
 
-            AddSongWIndow.addSongEditedCallBack(this);
             setupCloseActions();
 
             SongsSearchResultWindow.setSongs(songs);
@@ -157,6 +156,13 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         searchFieldComboBox.getSelectionModel().selectFirst();
         setUpMenu();
         setUpSuggestions();
+        addCallBacks();
+    }
+
+    private void addCallBacks() {
+        AddMovieWindow.addMovieEditedCallBack(this);
+        AddSongWIndow.addSongEditedCallBack(this);
+        AddArtistWindow.addArtistAddedCallBack(this);
     }
 
     private void setUpSuggestions() {
@@ -193,9 +199,23 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addArtistMenuItem.setOnAction(e -> {
             Parent root = null;
             try {
-                AddArtistWindow.addArtistAddedCallBack(this);
                 setupCloseActions();
                 root = FXMLLoader.load(getClass().getResource("AddArtistWindow.fxml"));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root, 500, 200));
+                stage.show();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+        MenuItem editArtistMenuItem = menuSong.getItems().get(1);
+
+        editArtistMenuItem.setOnAction(e -> {
+            Parent root = null;
+            try {
+                setupCloseActions();
+                root = FXMLLoader.load(getClass().getResource("SearchArtistInputWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
                 stage.show();
@@ -215,7 +235,6 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             Parent root = null;
             try {
                 AddSongWIndow.setSong(null);
-                AddSongWIndow.addSongEditedCallBack(this);
                 setupCloseActions();
 
                 root = FXMLLoader.load(getClass().getResource("AddSongWindow.fxml"));
@@ -238,7 +257,6 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             Parent root = null;
             try {
                 AddMovieWindow.setMovie(null);
-                AddMovieWindow.addMovieEditedCallBack(this);
                 setupCloseActions();
                 root = FXMLLoader.load(getClass().getResource("AddMovieWindow.fxml"));
                 Stage stage = new Stage();
@@ -270,22 +288,20 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             if (songNames != null)
                 comboBoxSearch.getItems().addAll(songNames);
-            FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         } else if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 1) {
             if (comboBoxSearch.getItems().size() > 0)
                 comboBoxSearch.getItems().clear();
 
             if (movieNames != null)
                 comboBoxSearch.getItems().addAll(movieNames);
-            FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         } else {
             if (comboBoxSearch.getItems().size() > 0)
                 comboBoxSearch.getItems().clear();
 
             if (artistNames != null)
                 comboBoxSearch.getItems().addAll(artistNames);
-            FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
         }
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
     }
 
     @Override
@@ -322,6 +338,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
     public void artistAdded() {
         (new Thread(() -> {
             artistNames = databaseHelper.getAllArtists();
+            songNames=databaseHelper.getAllSongs();
             selectionChanged();
         })).start();
     }

@@ -24,7 +24,7 @@
         <Font name="System Bold" size="22.0" />
       </font>
       <BorderPane.margin>
-        <Insets bottom="10.0" top="10.0" />
+        <Insets top="20.0" />
       </BorderPane.margin>
     </Label>
   </top>

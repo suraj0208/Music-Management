@@ -3,6 +3,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.StringJoiner;
 
 /**
  * Created by suraj on 7/6/17.
@@ -550,7 +551,6 @@ public class DatabaseHelper {
 
     public boolean deleteSong(Song song) {
         try {
-
             PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs WHERE song_id=?");
             statement.setInt(1, song.getId());
             statement.executeUpdate();
@@ -561,5 +561,96 @@ public class DatabaseHelper {
         }
 
         return false;
+    }
+
+    public boolean updateArtist(Artist artist) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE Artists SET artist_name=? WHERE artist_id=?");
+            statement.setString(1, artist.getName());
+            statement.setInt(2, artist.getId());
+
+            statement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public Artist getArtistFromName(String name) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Artists WHERE artist_name=?");
+            statement.setString(1, name);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                Artist artist = new Artist(resultSet.getInt(1), name);
+                return artist;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+    public boolean deleteArtist(Artist artist) {
+        try {
+            ArrayList<Integer> songIdsForArtist = getSongIdsForArtist(artist);
+
+            if(songIdsForArtist==null)
+                return false;
+
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Artists WHERE artist_id=?");
+            preparedStatement.setInt(1, artist.getId());
+
+            preparedStatement.executeUpdate();
+
+            for(Integer id:songIdsForArtist)
+                deleteSong(id);
+
+            return true;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private void deleteSong(int id) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM Songs WHERE song_id=?");
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private ArrayList<Integer> getSongIdsForArtist(Artist artist) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT song_id FROM Songs_Artists WHERE artist_id=?");
+            preparedStatement.setInt(1, artist.getId());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            ArrayList<Integer> songIds = new ArrayList<>();
+
+            while (resultSet.next())
+                songIds.add(resultSet.getInt(1));
+
+            return songIds;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 }

@@ -62,6 +62,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         btnAddNewLanguage.setOnAction(e -> {
             Parent root = null;
             try {
@@ -89,6 +90,9 @@ public class AddMovieWindow extends Application implements Initializable, Langua
             lblAddMovieWindowTitle.setText("Edit Movie Details");
 
             btnDeleteMovie.setOnAction(e -> {
+                if(!Utils.confirmDialog("Do you want to delete this movie and all its songs?"))
+                    return;
+
                 if (databaseHelper.deleteMovie(movie.getId())) {
                     Utils.showInfo("Movie Deleted");
 
@@ -105,12 +109,17 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                 if (!prepareMovie())
                     return;
 
+                if(!Utils.confirmDialog("Do you want to save the changes?"))
+                    return;
+
                 if (databaseHelper.updateMovie(movie)) {
                     Utils.showInfo("Movie Saved");
                     closeWindow();
 
-                    for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
-                        movieEditedCallBack.movieEdited(originalMovie, movie);
+                    if(movieEditedCallBacks !=null)
+                        for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
+                            if(movieEditedCallBack!=null)
+                                movieEditedCallBack.movieEdited(originalMovie, movie);
                 }
             });
 
