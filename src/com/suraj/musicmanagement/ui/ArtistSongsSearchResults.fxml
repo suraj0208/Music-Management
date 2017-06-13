@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.suraj.musicmanagement.controllers.ArtistSongsSearchResults">
+  <center>
+    <TableView fx:id="tblSearchResults" prefHeight="200.0" prefWidth="200.0">
+      <BorderPane.margin>
+        <Insets />
+      </BorderPane.margin>
+    </TableView>
+  </center>
+  <top>
+    <Label id="lblSearchArtistName" fx:id="lblSearchArtistName" text="Search Results" BorderPane.alignment="CENTER">
+      <font>
+        <Font name="System Bold" size="22.0" />
+      </font>
+      <BorderPane.margin>
+        <Insets bottom="10.0" top="10.0" />
+      </BorderPane.margin>
+    </Label>
+  </top>
+</BorderPane>

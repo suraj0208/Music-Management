@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="borderPaneRoot" prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.suraj.musicmanagement.controllers.MovieSongsSearchResultsWindow">
+  <center>
+    <TableView fx:id="tblSearchResults" prefHeight="200.0" prefWidth="200.0">
+      <BorderPane.margin>
+        <Insets />
+      </BorderPane.margin>
+    </TableView>
+  </center>
+  <fx:define>
+    <Image url="../images/ic_edit.png" requestedHeight="20.0" requestedWidth="20.0" fx:id="btnImage" />
+  </fx:define>
+  <top>
+    <GridPane vgap="10.0">
+      <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+          <children>
+            <Label fx:id="lblMovieName" prefWidth="301.0" text="com.suraj.musicmanagement.data.Movie Name">
+              <font>
+                <Font name="System Bold" size="22.0" />
+              </font>
+            </Label>
+          </children>
+        </HBox>
+        <Label fx:id="lblMovieLanguage" text="com.suraj.musicmanagement.data.Language" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label fx:id="lblMovieYear" text="Year" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+        <Label fx:id="lblMovieRecordNumber" text="Record No" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Button fx:id="btnEditMovie" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
+          <graphic>
+            <ImageView image="$btnImage" />
+          </graphic>
+        </Button>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="402.0" minWidth="10.0" prefWidth="402.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="389.0" minWidth="10.0" prefWidth="178.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <BorderPane.margin>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      </BorderPane.margin>
+    </GridPane>
+  </top>
+</BorderPane>
