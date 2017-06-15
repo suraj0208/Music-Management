@@ -37,8 +37,8 @@ public class AddLanguageWindow extends Application implements Initializable {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddLanguageWindow.fxml"));
-        primaryStage.setTitle("Add data.Language");
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddLanguageWindow.fxml"));
+        primaryStage.setTitle("Add Language");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
     }

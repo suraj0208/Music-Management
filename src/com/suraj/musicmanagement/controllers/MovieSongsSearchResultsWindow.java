@@ -64,7 +64,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/MovieSongsSearchResultsWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"));
         primaryStage.setTitle("Search Results");
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();
@@ -89,7 +89,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
             try {
                 AddMovieWindow.addMovieEditedCallBack(this);
                 setupCloseEvent();
-                root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddMovieWindow.fxml"));
+                root = FXMLLoader.load(getClass().getResource("../ui/AddMovieWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 300));
                 stage.show();
@@ -102,7 +102,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
     }
 
     private void setSongsTable() {
-        TableColumn<Song, String> tableColumnSongName = new TableColumn<>("data.Song Name");
+        TableColumn<Song, String> tableColumnSongName = new TableColumn<>("Song Name");
 
         tableColumnSongName.setMinWidth(200);
         tableColumnSongName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -151,7 +151,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
                             AddSongWindow.removeSongEditedCallBack(this);
                         });
 
-                        root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddSongWindow.fxml"));
+                        root = FXMLLoader.load(getClass().getResource("../ui/AddSongWindow.fxml"));
                         Stage stage = new Stage();
                         stage.setScene(new Scene(root, 500, 400));
                         stage.show();
@@ -169,7 +169,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     private void setMovieDetails() {
         lblMovieName.setText(movie.getName());
-        lblMovieLanguage.setText("data.Language: " + movie.getLanguage());
+        lblMovieLanguage.setText("Language: " + movie.getLanguage());
         lblMovieYear.setText("Year: " + movie.getYear());
         lblMovieRecordNumber.setText("Record No: " + movie.getRecordNo());
     }

@@ -20,12 +20,12 @@
                         <Insets left="10.0" right="10.0" top="60.0"/>
                     </HBox.margin>
                 </ComboBox>
-                <ComboBox fx:id="searchFieldComboBox" editable="false" onAction="#selectionChanged" promptText="com.suraj.musicmanagement.data.Song">
+                <ComboBox fx:id="searchFieldComboBox" editable="false" onAction="#selectionChanged" promptText="Song">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="com.suraj.musicmanagement.data.Song"/>
-                            <String fx:value="com.suraj.musicmanagement.data.Movie"/>
-                            <String fx:value="com.suraj.musicmanagement.data.Artist"/>
+                            <String fx:value="Song"/>
+                            <String fx:value="Movie"/>
+                            <String fx:value="Artist"/>
                         </FXCollections>
                     </items>
                     <HBox.margin>
@@ -42,25 +42,31 @@
             <children>
                 <MenuBar fx:id="menuBar" prefWidth="800.0">
                     <menus>
-                        <Menu mnemonicParsing="false" text="com.suraj.musicmanagement.data.Movie">
+                        <Menu mnemonicParsing="false" text="Movie">
                             <items>
                                 <MenuItem mnemonicParsing="false" text="Add movie"/>
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="com.suraj.musicmanagement.data.Song">
+                        <Menu mnemonicParsing="false" text="Song">
                             <items>
                                 <MenuItem mnemonicParsing="false" text="Add song"/>
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="com.suraj.musicmanagement.data.Artist">
+                        <Menu mnemonicParsing="false" text="Artist">
                             <items>
                                 <MenuItem mnemonicParsing="false" text="Add artist"/>
                                 <MenuItem mnemonicParsing="false" text="Edit artist"/>
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="com.suraj.musicmanagement.data.Lyricist">
+                        <Menu mnemonicParsing="false" text="Lyricist">
                             <items>
                                 <MenuItem mnemonicParsing="false" text="Add lyricist"/>
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Records">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Display All"/>
+                                <MenuItem mnemonicParsing="false" text="Export All"/>
                             </items>
                         </Menu>
                     </menus>

@@ -23,9 +23,9 @@
                 </Label>
                 <Label font="$x1" text="Year :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
                        GridPane.rowIndex="1" GridPane.valignment="CENTER"/>
-                <Label font="$x1" text="com.suraj.musicmanagement.data.Language :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
+                <Label font="$x1" text="Language :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
                        GridPane.rowIndex="2" GridPane.valignment="CENTER"/>
-                <TextField fx:id="txtFieldMovieName" prefHeight="32.0" prefWidth="398.0" promptText="com.suraj.musicmanagement.data.Movie Name"
+                <TextField fx:id="txtFieldMovieName" prefHeight="32.0" prefWidth="398.0" promptText="Movie Name"
                            GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <GridPane.margin>
                         <Insets left="5.0" right="5.0" fx:id="x2"/>
@@ -42,7 +42,7 @@
                             </items>
                         </ComboBox>
                         <Button fx:id="btnAddNewLanguage" mnemonicParsing="false" prefWidth="222.0"
-                                text="Add New com.suraj.musicmanagement.data.Language"/>
+                                text="Add New Language"/>
                     </children>
                 </HBox>
                 <TextField id="txtFieldMovieYear" fx:id="txtFieldRecordNo" prefHeight="32.0" prefWidth="398.0"
@@ -88,7 +88,7 @@
         </GridPane>
     </center>
     <top>
-        <Label fx:id="lblAddMovieWindowTitle" text="Add New com.suraj.musicmanagement.data.Movie" BorderPane.alignment="CENTER">
+        <Label fx:id="lblAddMovieWindowTitle" text="Add New Movie" BorderPane.alignment="CENTER">
             <font>
                 <Font name="System Bold" size="22.0"/>
             </font>

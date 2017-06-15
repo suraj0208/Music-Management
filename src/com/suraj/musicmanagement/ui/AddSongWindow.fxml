@@ -23,17 +23,17 @@
                         <Font size="18.0" fx:id="x1"/>
                     </font>
                 </Label>
-                <Label font="$x1" text="com.suraj.musicmanagement.data.Movie :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
+                <Label font="$x1" text="Movie :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
                        GridPane.rowIndex="1" GridPane.valignment="CENTER"/>
-                <Label font="$x1" text="com.suraj.musicmanagement.data.Artist 1 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
+                <Label font="$x1" text="Artist 1 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
                        GridPane.rowIndex="2" GridPane.valignment="CENTER"/>
-                <Label font="$x1" text="com.suraj.musicmanagement.data.Artist 2 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
+                <Label font="$x1" text="Artist 2 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
                        GridPane.rowIndex="3" GridPane.valignment="CENTER"/>
-                <Label font="$x1" text="com.suraj.musicmanagement.data.Artist 3 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
+                <Label font="$x1" text="Artist 3 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
                        GridPane.rowIndex="4" GridPane.valignment="CENTER"/>
-                <Label font="$x1" text="com.suraj.musicmanagement.data.Artist 4 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
+                <Label font="$x1" text="Artist 4 :" GridPane.columnIndex="0" GridPane.halignment="RIGHT"
                        GridPane.rowIndex="5" GridPane.valignment="CENTER"/>
-                <TextField fx:id="txtFieldSongName" prefHeight="32.0" prefWidth="398.0" promptText="com.suraj.musicmanagement.data.Song Name"
+                <TextField fx:id="txtFieldSongName" prefHeight="32.0" prefWidth="398.0" promptText="Song Name"
                            GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <GridPane.margin>
                         <Insets left="5.0" right="5.0" fx:id="x2"/>
@@ -72,7 +72,7 @@
                         <FXCollections fx:factory="observableArrayList"/>
                     </items>
                 </ComboBox>
-                <Button fx:id="btnAddNewArtist" mnemonicParsing="false" prefWidth="398.0" text="Add New com.suraj.musicmanagement.data.Artist"
+                <Button fx:id="btnAddNewArtist" mnemonicParsing="false" prefWidth="398.0" text="Add New Artist"
                         GridPane.columnIndex="1" GridPane.rowIndex="6">
                     <GridPane.margin>
                         <Insets left="5.0" right="5.0" fx:id="x2"/>
@@ -107,7 +107,7 @@
     <top>
         <GridPane>
             <children>
-                <Label fx:id="lblNewSong" text="Add New com.suraj.musicmanagement.data.Song" GridPane.columnIndex="0" GridPane.halignment="CENTER"
+                <Label fx:id="lblNewSong" text="Add New Song" GridPane.columnIndex="0" GridPane.halignment="CENTER"
                        GridPane.rowIndex="0">
                     <font>
                         <Font name="System Bold" size="22.0"/>
@@ -118,7 +118,7 @@
                 </Label>
 
                 <fx:define>
-                    <Image url="../images/ic_delete.png" requestedHeight="20.0" requestedWidth="20.0" fx:id="btnImage"/>
+                    <Image url="/com/suraj/musicmanagement/images/ic_delete.png" requestedHeight="20.0" requestedWidth="20.0" fx:id="btnImage"/>
                 </fx:define>
 
                 <Button fx:id="btnDeleteSong" mnemonicParsing="false" text="" GridPane.columnIndex="1"

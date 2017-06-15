@@ -22,7 +22,7 @@
                     </font>
                 </Label>
                 <TextField id="txtFieldMovieName" fx:id="txtFieldLanguageName" prefHeight="32.0" prefWidth="373.0"
-                           promptText="com.suraj.musicmanagement.data.Language Name" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                           promptText="Language Name" GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <GridPane.margin>
                         <Insets left="5.0" right="5.0" fx:id="x2"/>
                     </GridPane.margin>
@@ -44,7 +44,7 @@
         </GridPane>
     </center>
     <top>
-        <Label text="Add New com.suraj.musicmanagement.data.Language" BorderPane.alignment="CENTER">
+        <Label text="Add New Language" BorderPane.alignment="CENTER">
             <font>
                 <Font name="System Bold" size="22.0"/>
             </font>

@@ -63,8 +63,8 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddMovieWindow.fxml"));
-        primaryStage.setTitle("Add data.Movie");
+        Parent root = FXMLLoader.load(getClass().getResource("../ui/AddMovieWindow.fxml"));
+        primaryStage.setTitle("Add Movie");
         primaryStage.setScene(new Scene(root, 520, 300));
         primaryStage.show();
     }
@@ -89,7 +89,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
         btnAddNewLanguage.setOnAction(e -> {
             Parent root = null;
             try {
-                root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddLanguageWindow.fxml"));
+                root = FXMLLoader.load(getClass().getResource("../ui/AddLanguageWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
 
@@ -110,14 +110,14 @@ public class AddMovieWindow extends Application implements Initializable, Langua
             txtFieldMovieYear.setText("" + movie.getYear());
             txtFieldRecordNo.setText("" + movie.getRecordNo());
             comboMovieLanguage.setValue(movie.getLanguage());
-            lblAddMovieWindowTitle.setText("Edit data.Movie Details");
+            lblAddMovieWindowTitle.setText("Edit Movie Details");
 
             btnDeleteMovie.setOnAction(e -> {
                 if (!Utils.confirmDialog("Do you want to delete this movie and all its songs?"))
                     return;
 
                 if (databaseHelper.deleteMovie(movie.getId())) {
-                    Utils.showInfo("data.Movie Deleted");
+                    Utils.showInfo("Movie Deleted");
 
                     for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
                         movieEditedCallBack.movieEdited(originalMovie, null);
@@ -136,7 +136,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                     return;
 
                 if (databaseHelper.updateMovie(movie)) {
-                    Utils.showInfo("data.Movie Saved");
+                    Utils.showInfo("Movie Saved");
                     closeWindow();
 
                     if (movieEditedCallBacks != null)
@@ -159,7 +159,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
                 databaseHelper.addMovie(movie);
                 clearFields();
 
-                Utils.showInfo("data.Movie Saved");
+                Utils.showInfo("Movie Saved");
 
                 for (MovieEditedCallBack movieEditedCallBack : movieEditedCallBacks)
                     if (movieEditedCallBack != null)

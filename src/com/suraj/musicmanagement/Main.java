@@ -1,7 +1,6 @@
 package com.suraj.musicmanagement;
 
 import com.suraj.musicmanagement.data.*;
-import data.*;
 
 import java.util.ArrayList;
 import java.util.Scanner;

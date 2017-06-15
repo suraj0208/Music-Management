@@ -1,8 +1,9 @@
 package com.suraj.musicmanagement;
 
 import com.suraj.musicmanagement.data.*;
-import data.*;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,8 +102,8 @@ public class DatabaseHelper {
             statement.executeUpdate(query);
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT song_id FROM " + DATABASE_SONGS_TABLE_NAME + " WHERE song_name = ? AND movie_id = ?;");
-            preparedStatement.setString(1,song.getName());
-            preparedStatement.setInt(2,song.getMovieId());
+            preparedStatement.setString(1, song.getName());
+            preparedStatement.setInt(2, song.getMovieId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             int songId = -1;
@@ -269,8 +270,8 @@ public class DatabaseHelper {
         try {
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT movie_id, movie_name, movie_year, Movies.language_id, language_name, movie_record_no FROM "
-                            + DATABASE_MOVIES_TABLE_NAME + " INNER JOIN " + DATABASE_LANGUAGES_TABLE_NAME + " ON Movies.language_id = Languages.language_id where movie_name=?;");
-            preparedStatement.setString(1,movieName);
+                    + DATABASE_MOVIES_TABLE_NAME + " INNER JOIN " + DATABASE_LANGUAGES_TABLE_NAME + " ON Movies.language_id = Languages.language_id where movie_name=?;");
+            preparedStatement.setString(1, movieName);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -304,7 +305,7 @@ public class DatabaseHelper {
                 return null;
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = ?);");
-            preparedStatement.setInt(1,id);
+            preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -382,7 +383,7 @@ public class DatabaseHelper {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1,movie.getId());
+            preparedStatement.setInt(1, movie.getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -426,7 +427,7 @@ public class DatabaseHelper {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_name = ?;");
-            preparedStatement.setString(1,songName);
+            preparedStatement.setString(1, songName);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -494,7 +495,7 @@ public class DatabaseHelper {
         ResultSet resultSet = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT artist_id FROM Artists where artist_name = ?;");
-            preparedStatement.setString(1,name);
+            preparedStatement.setString(1, name);
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next())
@@ -619,7 +620,7 @@ public class DatabaseHelper {
         try {
             ArrayList<Integer> songIdsForArtist = getSongIdsForArtist(artist);
 
-            if(songIdsForArtist==null)
+            if (songIdsForArtist == null)
                 return false;
 
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Artists WHERE artist_id=?;");
@@ -627,7 +628,7 @@ public class DatabaseHelper {
 
             preparedStatement.executeUpdate();
 
-            for(Integer id:songIdsForArtist)
+            for (Integer id : songIdsForArtist)
                 deleteSong(id);
 
             return true;
@@ -669,4 +670,51 @@ public class DatabaseHelper {
 
         return null;
     }
+
+    public boolean exportDatabase(String location) {
+        try {
+            FileWriter fileWriter = new FileWriter(new File(location));
+
+            String query = "select song_name,group_concat(artist_name separator ', '),movie_name, movie_year,language_name,movie_record_no from Movies inner join Languages on Movies.language_id = Languages.language_id inner join Songs on Movies.movie_id=Songs.movie_id inner join Songs_Artists on Songs.song_id=Songs_Artists.song_id inner join Artists on Artists.artist_id=Songs_Artists.artist_id group by Songs.song_id;";
+
+            ResultSet resultSet = connection.createStatement().executeQuery(query);
+
+            fileWriter.write("Song");
+            fileWriter.write(",");
+            fileWriter.write("Artists");
+            fileWriter.write(",");
+            fileWriter.write("Movie");
+            fileWriter.write(",");
+            fileWriter.write("Year");
+            fileWriter.write(",");
+            fileWriter.write("Language");
+            fileWriter.write(",");
+            fileWriter.write("Record No");
+            fileWriter.write("\n");
+            fileWriter.write("\n");
+
+            while (resultSet.next()) {
+                fileWriter.write(resultSet.getString(1));
+                fileWriter.write(",");
+                fileWriter.write('"'+ resultSet.getString(2)+'"');
+                fileWriter.write(",");
+                fileWriter.write(resultSet.getString(3));
+                fileWriter.write(",");
+                fileWriter.write(resultSet.getString(4));
+                fileWriter.write(",");
+                fileWriter.write(resultSet.getString(5));
+                fileWriter.write(",");
+                fileWriter.write(resultSet.getString(6));
+                fileWriter.write("\n");
+            }
+            fileWriter.close();
+            return true;
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
 }

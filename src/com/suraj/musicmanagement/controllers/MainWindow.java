@@ -17,8 +17,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.rmi.CORBA.Util;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,7 +56,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/MainWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/MainWindow.fxml"));
         primaryStage.setTitle("Music Management");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
@@ -75,7 +78,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         Parent root;
         Stage stage;
 
-        if (searchFieldComboBox.getValue().equals("data.Song")) {
+        if (searchFieldComboBox.getValue().equals("Song")) {
             songs = databaseHelper.findSong(searchName);
 
             if (songs == null) {
@@ -97,12 +100,12 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             SongsSearchResultWindow.setSongs(songs);
             SongsSearchResultWindow.setSearchName(searchName);
-            root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/SongsSearchResultWindow.fxml"));
+            root = FXMLLoader.load(getClass().getResource("../ui/SongsSearchResultWindow.fxml"));
             stage = new Stage();
             stage.setScene(new Scene(root, 500, 500));
             stage.show();
 
-        } else if (searchFieldComboBox.getValue().equals("data.Movie")) {
+        } else if (searchFieldComboBox.getValue().equals("Movie")) {
             songs = databaseHelper.getSongsForMovie(searchName);
 
             if (songs == null) {
@@ -119,7 +122,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             setupCloseActions();
 
             MovieSongsSearchResultsWindow.setSongs(songs);
-            root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/MovieSongsSearchResultsWindow.fxml"));
+            root = FXMLLoader.load(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"));
             stage = new Stage();
             stage.setScene(new Scene(root, 500, 500));
             stage.show();
@@ -145,7 +148,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             ArtistSongsSearchResults.setSearchName(searchName);
             ArtistSongsSearchResults.setSongs(songs);
-            root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/ArtistSongsSearchResults.fxml"));
+            root = FXMLLoader.load(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"));
             stage = new Stage();
             stage.setScene(new Scene(root, 750, 500));
             stage.show();
@@ -199,6 +202,35 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         setUpMoviesMenu();
         setUpSongsMenu();
         setUpArtistMenu();
+        setUpRecordsMenu();
+    }
+
+    private void setUpRecordsMenu() {
+        Menu menuSong = menuBar.getMenus().get(4);
+
+        MenuItem exportAllMenuItem = menuSong.getItems().get(1);
+
+        exportAllMenuItem.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+            fileChooser.getExtensionFilters().add(extFilter);
+
+            File file = fileChooser.showSaveDialog(btnSearch.getScene().getWindow());
+
+            if(file != null){
+                String path = file.getAbsolutePath();
+                if(!path.endsWith(".csv"))
+                    path=path+".csv";
+
+                if (databaseHelper.exportDatabase(path)) {
+                    Utils.showInfo("Exported Successfully");
+                } else {
+                    Utils.showError("Error occurred while reading the database");
+                }
+            }else
+                Utils.showError("Error occurred while setting the file path");
+        });
     }
 
     private void setUpArtistMenu() {
@@ -210,7 +242,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             Parent root = null;
             try {
                 setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddArtistWindow.fxml"));
+                root = FXMLLoader.load(getClass().getResource("../ui/AddArtistWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
                 stage.show();
@@ -225,7 +257,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             Parent root = null;
             try {
                 setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/SearchArtistInputWindow.fxml"));
+                root = FXMLLoader.load(getClass().getResource("../ui/SearchArtistInputWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
                 stage.show();
@@ -247,7 +279,10 @@ public class MainWindow extends Application implements Initializable, MovieEdite
                 AddSongWindow.setSong(null);
                 setupCloseActions();
 
-                root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddSongWindow.fxml"));
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(getClass().getResource("../ui/AddSongWindow.fxml"));
+
+                root = loader.load();
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 400));
                 stage.show();
@@ -268,7 +303,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             try {
                 AddMovieWindow.setMovie(null);
                 setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddMovieWindow.fxml"));
+                root = FXMLLoader.load(getClass().getResource("../ui/AddMovieWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 300));
                 stage.show();
@@ -348,7 +383,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
     public void artistAdded() {
         (new Thread(() -> {
             artistNames = databaseHelper.getAllArtists();
-            songNames=databaseHelper.getAllSongs();
+            songNames = databaseHelper.getAllSongs();
             selectionChanged();
         })).start();
     }

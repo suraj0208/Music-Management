@@ -49,7 +49,7 @@ public class ArtistSongsSearchResults extends Application implements Initializab
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/ArtistSongsSearchResults.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"));
         primaryStage.setTitle("Search Results");
         primaryStage.setScene(new Scene(root, 700, 500));
         primaryStage.show();
@@ -62,11 +62,11 @@ public class ArtistSongsSearchResults extends Application implements Initializab
     }
 
     private void setSongsTable() {
-        TableColumn<Song, String> tableColumnSongName = new TableColumn<>("data.Song");
+        TableColumn<Song, String> tableColumnSongName = new TableColumn<>("Song");
         tableColumnSongName.setMinWidth(150);
         tableColumnSongName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn<Song, String> tableColumnMovie = new TableColumn<>("data.Movie");
+        TableColumn<Song, String> tableColumnMovie = new TableColumn<>("Movie");
         tableColumnMovie.setMinWidth(150);
         tableColumnMovie.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getMovie().getName()));
 

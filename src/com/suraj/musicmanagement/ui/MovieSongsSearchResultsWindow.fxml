@@ -16,21 +16,21 @@
     </TableView>
   </center>
   <fx:define>
-    <Image url="../images/ic_edit.png" requestedHeight="20.0" requestedWidth="20.0" fx:id="btnImage" />
+    <Image url="/com/suraj/musicmanagement/images/ic_edit.png" requestedHeight="20.0" requestedWidth="20.0" fx:id="btnImage" />
   </fx:define>
   <top>
     <GridPane vgap="10.0">
       <children>
         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
           <children>
-            <Label fx:id="lblMovieName" prefWidth="301.0" text="com.suraj.musicmanagement.data.Movie Name">
+            <Label fx:id="lblMovieName" prefWidth="301.0" text="Movie Name">
               <font>
                 <Font name="System Bold" size="22.0" />
               </font>
             </Label>
           </children>
         </HBox>
-        <Label fx:id="lblMovieLanguage" text="com.suraj.musicmanagement.data.Language" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label fx:id="lblMovieLanguage" text="Language" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <Label fx:id="lblMovieYear" text="Year" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
         <Label fx:id="lblMovieRecordNumber" text="Record No" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <Button fx:id="btnEditMovie" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="0">

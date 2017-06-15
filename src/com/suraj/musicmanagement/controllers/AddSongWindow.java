@@ -76,7 +76,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddSongWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../ui/AddSongWindow.fxml"));
         primaryStage.setTitle("Add data.Song");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
@@ -129,7 +129,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
         btnAddNewArtist.setOnAction(e -> {
             Parent root = null;
             try {
-                root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddArtistWindow.fxml"));
+                root = FXMLLoader.load(getClass().getResource("../ui/AddArtistWindow.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root, 500, 200));
                 setupCloseActions();
@@ -140,7 +140,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
         });
 
         if (song != null) {
-            lblNewSong.setText("Edit data.Song");
+            lblNewSong.setText("Edit Song");
             final Song originalSong = song;
 
             btnDeleteSong.setOnAction(event -> {
@@ -148,7 +148,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
                     return;
 
                 if (databaseHelper.deleteSong(song)) {
-                    Utils.showInfo("data.Song Deleted");
+                    Utils.showInfo("Song Deleted");
 
                     if (songEditedCallBacks != null)
                         for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
@@ -170,7 +170,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
                     return;
 
                 if (databaseHelper.updateSong(song)) {
-                    Utils.showInfo("data.Song Saved");
+                    Utils.showInfo("Song Saved");
 
                     if (songEditedCallBacks != null)
                         for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
@@ -201,7 +201,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
             for (SongEditedCallBack songEditedCallBack : songEditedCallBacks)
                 songEditedCallBack.songEdited(null, song);
 
-            Utils.showInfo("data.Song Saved");
+            Utils.showInfo("Song Saved");
         });
     }
 
@@ -259,7 +259,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
 
         if (!doesArtistExist(artist1) || !doesArtistExist(artist2) || !doesArtistExist(artist3) || !doesArtistExist(artist4)) {
-            Utils.showError("data.Artist(s) does not exist");
+            Utils.showError("Artist(s) does not exist");
             return false;
         }
 

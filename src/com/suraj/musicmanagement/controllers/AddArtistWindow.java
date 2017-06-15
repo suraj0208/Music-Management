@@ -60,8 +60,8 @@ public class AddArtistWindow extends Application implements Initializable {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("com/suraj/musicmanagement/ui/AddArtistWindow.fxml"));
-        primaryStage.setTitle("Add data.Artist");
+        Parent root = FXMLLoader.load(getClass().getResource("../ui/AddArtistWindow.fxml"));
+        primaryStage.setTitle("Add Artist");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
     }
@@ -77,7 +77,7 @@ public class AddArtistWindow extends Application implements Initializable {
         });
 
         if (artist != null) {
-            lblAddArtistWindowTitle.setText("Edit data.Artist Name");
+            lblAddArtistWindowTitle.setText("Edit Artist Name");
 
             txtFieldArtistName.setText(artist.getName());
 
@@ -106,7 +106,7 @@ public class AddArtistWindow extends Application implements Initializable {
                     return;
 
                 if(new DatabaseHelper().deleteArtist(artist)){
-                    Utils.showInfo("data.Artist Deleted");
+                    Utils.showInfo("Artist Deleted");
 
                     if (artistAddedCallBacks != null)
                         for (ArtistAddedCallBack artistAddedCallBack : artistAddedCallBacks)
