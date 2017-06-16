@@ -20,7 +20,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.rmi.CORBA.Util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -49,6 +48,8 @@ public class MainWindow extends Application implements Initializable, MovieEdite
     private HashSet<String> songNames;
     private HashSet<String> movieNames;
     private HashSet<String> artistNames;
+    private HashSet<String> recordNumbers;
+    private String searchName;
 
     public static void main(String[] args) {
         launch(args);
@@ -63,15 +64,12 @@ public class MainWindow extends Application implements Initializable, MovieEdite
     }
 
     public void onSearch() throws Exception {
-        if (comboBoxSearch.getSelectionModel().getSelectedItem() == null || comboBoxSearch.getSelectionModel().getSelectedItem().length() == 0) {
+        if (searchName == null || searchName.length() == 0) {
             Utils.showError("Invalid Input");
             return;
         }
 
-        String searchName = comboBoxSearch.getSelectionModel().getSelectedItem();
-
-        if (searchName == null || searchName.length() == 0)
-            return;
+        //searchName = comboBoxSearch.getEditor().getText();
 
         ArrayList<Song> songs;
 
@@ -106,6 +104,14 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             stage.show();
 
         } else if (searchFieldComboBox.getValue().equals("Movie")) {
+
+            Movie movie = databaseHelper.findMovie(searchName);
+
+            if (movie == null) {
+                Utils.showInfo("No such movie");
+                return;
+            }
+
             songs = databaseHelper.getSongsForMovie(searchName);
 
             if (songs == null) {
@@ -117,7 +123,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
                 Utils.showInfo("No songs available");
             }
 
-            MovieSongsSearchResultsWindow.setMovie(databaseHelper.findMovie(searchName));
+            MovieSongsSearchResultsWindow.setMovie(movie);
             AddMovieWindow.addMovieEditedCallBack(this);
             setupCloseActions();
 
@@ -128,7 +134,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             stage.show();
 
 
-        } else {
+        } else if (searchFieldComboBox.getValue().equals("Artist")) {
             songs = databaseHelper.getSongsForArtist(searchName);
 
             if (songs == null) {
@@ -152,6 +158,39 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             stage = new Stage();
             stage.setScene(new Scene(root, 750, 500));
             stage.show();
+        } else if (searchFieldComboBox.getValue().equals("Record No")) {
+            try {
+                songs = databaseHelper.getSongsForMovie(Integer.parseInt(searchName));
+
+                if (songs == null) {
+                    Utils.showError("Unable to get songs from database");
+                    return;
+                }
+
+                if (songs.size() == 0) {
+                    Utils.showInfo("No songs available");
+                    return;
+                }
+
+                if (songs.get(0) == null) {
+                    Utils.showError("Unexpected error occurred");
+                    return;
+                }
+
+                MovieSongsSearchResultsWindow.setMovie(songs.get(0).getMovie());
+                MovieSongsSearchResultsWindow.setSongs(songs);
+                root = FXMLLoader.load(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"));
+                stage = new Stage();
+                stage.setScene(new Scene(root, 500, 500));
+                stage.show();
+
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
+                Utils.showError("Invalid search parameter");
+
+            }
+
+
         }
 
     }
@@ -170,6 +209,18 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         setUpMenu();
         setUpSuggestions();
         addCallBacks();
+
+        comboBoxSearch.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && newValue.length() != 0)
+                searchName = newValue;
+
+        });
+
+        comboBoxSearch.getEditor().focusedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (oldValue)
+                        comboBoxSearch.getEditor().setText(searchName);
+                }
+        );
     }
 
     private void addCallBacks() {
@@ -196,6 +247,11 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             artistNames = databaseHelper.getAllArtists();
             selectionChanged();
         })).start();
+
+        (new Thread(() -> {
+            recordNumbers = databaseHelper.getAllRecordNumbers();
+            selectionChanged();
+        })).start();
     }
 
     private void setUpMenu() {
@@ -218,17 +274,17 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             File file = fileChooser.showSaveDialog(btnSearch.getScene().getWindow());
 
-            if(file != null){
+            if (file != null) {
                 String path = file.getAbsolutePath();
-                if(!path.endsWith(".csv"))
-                    path=path+".csv";
+                if (!path.endsWith(".csv"))
+                    path = path + ".csv";
 
                 if (databaseHelper.exportDatabase(path)) {
                     Utils.showInfo("Exported Successfully");
                 } else {
                     Utils.showError("Error occurred while reading the database");
                 }
-            }else
+            } else
                 Utils.showError("Error occurred while setting the file path");
         });
 
@@ -356,13 +412,20 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             if (movieNames != null)
                 comboBoxSearch.getItems().addAll(movieNames);
-        } else {
+        } else if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 2) {
             if (comboBoxSearch.getItems().size() > 0)
                 comboBoxSearch.getItems().clear();
 
             if (artistNames != null)
                 comboBoxSearch.getItems().addAll(artistNames);
+        } else if (searchFieldComboBox.getSelectionModel().getSelectedIndex() == 3) {
+            if (comboBoxSearch.getItems().size() > 0)
+                comboBoxSearch.getItems().clear();
+
+            if (recordNumbers != null)
+                comboBoxSearch.getItems().addAll(recordNumbers);
         }
+
         FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearch, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.toLowerCase().equals(typedText.toLowerCase()));
     }
 
@@ -375,6 +438,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
         if (edited != null) {
             movieNames.add(edited.getName());
+            recordNumbers.add(""+edited.getRecordNo());
             selectionChanged();
         } else {
             (new Thread(() -> {

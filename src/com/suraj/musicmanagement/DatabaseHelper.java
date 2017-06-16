@@ -745,4 +745,41 @@ public class DatabaseHelper {
         return null;
     }
 
+    public ArrayList<Song> getSongsForMovie(int recordNo) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT movie_name FROM Movies WHERE movie_record_no=?;");
+            preparedStatement.setInt(1, recordNo);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return getSongsForMovie(resultSet.getString(1));
+            } else {
+                return null;
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public HashSet<String> getAllRecordNumbers() {
+        try {
+            HashSet<String> allRecordNumbers = new HashSet<>();
+
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT DISTINCT(movie_record_no) FROM Movies;");
+
+            while (resultSet.next())
+                allRecordNumbers.add(resultSet.getString(1));
+
+
+            return allRecordNumbers;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

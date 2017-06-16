@@ -26,6 +26,7 @@
                             <String fx:value="Song"/>
                             <String fx:value="Movie"/>
                             <String fx:value="Artist"/>
+                            <String fx:value="Record No"/>
                         </FXCollections>
                     </items>
                     <HBox.margin>
