@@ -231,6 +231,23 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             }else
                 Utils.showError("Error occurred while setting the file path");
         });
+
+        MenuItem displayAllItem = menuSong.getItems().get(0);
+
+        displayAllItem.setOnAction(event -> {
+            Parent root = null;
+            try {
+                AllRecordsSearchWindow.setRecords(databaseHelper.getAllRecords());
+                setupCloseActions();
+                root = FXMLLoader.load(getClass().getResource("../ui/AllRecordsSearchWindow.fxml"));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root, 1050, 800));
+                stage.show();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
     }
 
     private void setUpArtistMenu() {

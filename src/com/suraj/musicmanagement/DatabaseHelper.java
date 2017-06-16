@@ -304,7 +304,7 @@ public class DatabaseHelper {
             if (id == -1)
                 return null;
 
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = ?);");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = ?);");
             preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -426,7 +426,7 @@ public class DatabaseHelper {
         HashMap<Integer, Song> currentHashMap = new HashMap<>();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists on Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_name = ?;");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_name = ?;");
             preparedStatement.setString(1, songName);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -510,7 +510,7 @@ public class DatabaseHelper {
 
     public boolean deleteMovie(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("delete from Movies where movie_id=?;");
+            PreparedStatement preparedStatement = connection.prepareStatement("delete FROM Movies where movie_id=?;");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             return true;
@@ -675,7 +675,7 @@ public class DatabaseHelper {
         try {
             FileWriter fileWriter = new FileWriter(new File(location));
 
-            String query = "select song_name,group_concat(artist_name separator ', '),movie_name, movie_year,language_name,movie_record_no from Movies inner join Languages on Movies.language_id = Languages.language_id inner join Songs on Movies.movie_id=Songs.movie_id inner join Songs_Artists on Songs.song_id=Songs_Artists.song_id inner join Artists on Artists.artist_id=Songs_Artists.artist_id group by Songs.song_id;";
+            String query = "SELECT song_name,GROUP_CONCAT(artist_name SEPARATOR ', '),movie_name, movie_year,language_name,movie_record_no FROM Movies INNER JOIN Languages ON Movies.language_id = Languages.language_id INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Artists.artist_id=Songs_Artists.artist_id GROUP BY Songs.song_id;";
 
             ResultSet resultSet = connection.createStatement().executeQuery(query);
 
@@ -696,7 +696,7 @@ public class DatabaseHelper {
             while (resultSet.next()) {
                 fileWriter.write(resultSet.getString(1));
                 fileWriter.write(",");
-                fileWriter.write('"'+ resultSet.getString(2)+'"');
+                fileWriter.write('"' + resultSet.getString(2) + '"');
                 fileWriter.write(",");
                 fileWriter.write(resultSet.getString(3));
                 fileWriter.write(",");
@@ -715,6 +715,34 @@ public class DatabaseHelper {
         }
 
         return false;
+    }
+
+    public ArrayList<Record> getAllRecords() {
+        try {
+            String query = "SELECT song_name,GROUP_CONCAT(artist_name SEPARATOR ', '),movie_name, movie_year,language_name,movie_record_no FROM Movies INNER JOIN Languages ON Movies.language_id = Languages.language_id INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Artists.artist_id=Songs_Artists.artist_id GROUP BY Songs.song_id;";
+
+            ResultSet resultSet = connection.createStatement().executeQuery(query);
+
+            ArrayList<Record> records = new ArrayList<>();
+
+            while (resultSet.next()) {
+                Record record = new Record();
+                record.setSongName(resultSet.getString(1));
+                record.setArtists(resultSet.getString(2));
+                record.setMovieName(resultSet.getString(3));
+                record.setYear(resultSet.getInt(4));
+                record.setLanguage(resultSet.getString(5));
+                record.setRecordNo(resultSet.getInt(6));
+                records.add(record);
+            }
+
+            return records;
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
 }
