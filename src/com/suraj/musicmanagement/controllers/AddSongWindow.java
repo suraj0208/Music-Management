@@ -355,10 +355,10 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
         }
 
         if (song != null) {
-            song = new Song(song.getId(), txtFieldSongName.getText(), movie.getId(), movie, currentArtists, lyricist, musician);
+            song = new Song(song.getId(), txtFieldSongName.getText(), movie, currentArtists, lyricist, musician);
             return true;
         }
-        song = new Song(txtFieldSongName.getText(), movie.getId(), movie, currentArtists, lyricist, musician);
+        song = new Song(txtFieldSongName.getText(), movie, currentArtists, lyricist, musician);
         return true;
     }
 

@@ -97,13 +97,13 @@ public class DatabaseHelper {
             Statement statement = connection.createStatement();
 
             String query = "INSERT INTO " + DATABASE_SONGS_TABLE_NAME + " (song_name, movie_id, lyricist_id, musician_id) " +
-                    "VALUES('" + song.getName() + "'," + song.getMovieId() + ", " + song.getLyricist().getId() + ", " + song.getMusician().getId() + ");";
+                    "VALUES('" + song.getName() + "'," + song.getMovie().getId() + ", " + song.getLyricist().getId() + ", " + song.getMusician().getId() + ");";
 
             statement.executeUpdate(query);
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT song_id FROM " + DATABASE_SONGS_TABLE_NAME + " WHERE song_name = ? AND movie_id = ?;");
             preparedStatement.setString(1, song.getName());
-            preparedStatement.setInt(2, song.getMovieId());
+            preparedStatement.setInt(2, song.getMovie().getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             int songId = -1;
@@ -154,7 +154,7 @@ public class DatabaseHelper {
 
             while (resultSet.next()) {
                 Movie movie = new Movie();
-                Language language = new Language(resultSet.getInt(4),resultSet.getString(5));
+                Language language = new Language(resultSet.getInt(4), resultSet.getString(5));
                 movie.setId(resultSet.getInt(1));
                 movie.setName(resultSet.getString(2));
                 movie.setYear(resultSet.getInt(3));
@@ -280,7 +280,7 @@ public class DatabaseHelper {
                 movie.setId(resultSet.getInt(1));
                 movie.setName(resultSet.getString(2));
                 movie.setYear(resultSet.getInt(3));
-                Language language  = new Language(resultSet.getInt(4),resultSet.getString(5));
+                Language language = new Language(resultSet.getInt(4), resultSet.getString(5));
                 movie.setLanguage(language);
                 movie.setRecordNo(resultSet.getInt(6));
                 return movie;
@@ -316,10 +316,10 @@ public class DatabaseHelper {
                 Song currentSong = currentHashMap.get(resultSet.getInt(1));
 
                 if (currentSong == null) {
-                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3));
+                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), previousMovie);
 
                     if (previousMovie != null) {
-                        if (currentSong.getMovieId() == previousMovie.getId()) {
+                        if (currentSong.getMovie() != null && currentSong.getMovie().getId() == previousMovie.getId()) {
                             currentSong.setMovie(previousMovie);
                         } else {
                             previousMovie = new Movie();
@@ -330,7 +330,7 @@ public class DatabaseHelper {
                             currentSong.setMovie(previousMovie);
                         }
 
-                    } else if (previousMovie == null) {
+                    } else {
                         previousMovie = new Movie();
                         previousMovie.setId(resultSet.getInt(3));
                         previousMovie.setName(resultSet.getString(4));
@@ -393,10 +393,10 @@ public class DatabaseHelper {
                 Song currentSong = songs.get(songId);
 
                 if (currentSong == null) {
-                    Lyricist lyricist   = new Lyricist(resultSet.getInt(5),resultSet.getString(6));
-                    Musician musician = new Musician(resultSet.getInt(7),resultSet.getString(8));
+                    Lyricist lyricist = new Lyricist(resultSet.getInt(5), resultSet.getString(6));
+                    Musician musician = new Musician(resultSet.getInt(7), resultSet.getString(8));
 
-                    currentSong = new Song(songId, resultSet.getString(2), movie.getId(),movie,null,lyricist,musician);
+                    currentSong = new Song(songId, resultSet.getString(2), movie, null, lyricist, musician);
                     currentSong.setMovie(movie);
                     Artist artist = new Artist();
                     artist.setId(resultSet.getInt(3));
@@ -441,13 +441,13 @@ public class DatabaseHelper {
                 Song currentSong = currentHashMap.get(resultSet.getInt(1));
 
                 if (currentSong == null) {
-                    Lyricist lyricist = new Lyricist(resultSet.getInt(9),resultSet.getString(10));
-                    Musician musician = new Musician(resultSet.getInt(11),resultSet.getString(12));
+                    Lyricist lyricist = new Lyricist(resultSet.getInt(9), resultSet.getString(10));
+                    Musician musician = new Musician(resultSet.getInt(11), resultSet.getString(12));
 
-                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3),previousMovie,null, lyricist,musician);
+                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), previousMovie, null, lyricist, musician);
 
                     if (previousMovie != null) {
-                        if (currentSong.getMovieId() == previousMovie.getId()) {
+                        if (currentSong.getMovie()!=null && currentSong.getMovie().getId() == previousMovie.getId()) {
                             currentSong.setMovie(previousMovie);
                         } else {
                             previousMovie = new Movie();
