@@ -4,6 +4,11 @@ package com.suraj.musicmanagement.data;
  * Created by suraj on 7/6/17.
  */
 public class Language {
+    public Language(int id, String name) {
+        this.id=id;
+        this.name=name;
+    }
+
     public void setId(int id) {
         this.id = id;
     }

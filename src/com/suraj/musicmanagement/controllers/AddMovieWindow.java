@@ -100,7 +100,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
             txtFieldMovieName.setText(movie.getName());
             txtFieldMovieYear.setText("" + movie.getYear());
             txtFieldRecordNo.setText("" + movie.getRecordNo());
-            comboMovieLanguage.setValue(movie.getLanguage());
+            comboMovieLanguage.setValue(movie.getLanguage().getName());
             lblAddMovieWindowTitle.setText("Edit Movie Details");
 
             btnDeleteMovie.setOnAction(e -> {
@@ -230,12 +230,11 @@ public class AddMovieWindow extends Application implements Initializable, Langua
             }
 
         if (movie != null) {
-            movie = new Movie(movie.getId(), movieName, movieYear, selectedLanguage.getId(), movieRecordNo);
-            movie.setLanguage(selectedLanguage.getName());
+            movie = new Movie(movie.getId(), movieName, movieYear,selectedLanguage, movieRecordNo);
             return true;
         }
 
-        movie = new Movie(movieName, movieYear, selectedLanguage.getId(), movieRecordNo);
+        movie = new Movie(movieName, movieYear,selectedLanguage, movieRecordNo);
 
         return true;
     }

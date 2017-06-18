@@ -7,17 +7,23 @@ public class Movie {
     private int id;
     private String name;
     private int year;
-    private int languageId;
-    private String language;
+    private Language language;
 
     public Movie() {
     }
 
-    public Movie(int id, String movieName, int movieYear, int languageId, int movieRecordNo) {
+    public Movie(String movieName, int movieYear, Language language, int movieRecordNo) {
+        this.name = movieName;
+        this.year = movieYear;
+        this.language=language;
+        this.recordNo = movieRecordNo;
+    }
+
+    public Movie(int id, String movieName, int movieYear, Language language, int movieRecordNo) {
         this.id = id;
         this.name = movieName;
         this.year = movieYear;
-        this.languageId = languageId;
+        this.language=language;
         this.recordNo = movieRecordNo;
     }
 
@@ -31,10 +37,9 @@ public class Movie {
 
     private int recordNo;
 
-    public Movie(String name, int year, int languageId, int recordNo) {
+    public Movie(String name, int year, int recordNo) {
         this.name = name;
         this.year = year;
-        this.languageId = languageId;
         this.recordNo = recordNo;
     }
 
@@ -59,19 +64,11 @@ public class Movie {
         this.year = year;
     }
 
-    public int getLanguageId() {
-        return languageId;
-    }
-
-    public void setLanguageId(int languageId) {
-        this.languageId = languageId;
-    }
-
-    public String getLanguage() {
+    public Language getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Language language) {
         this.language = language;
     }
 

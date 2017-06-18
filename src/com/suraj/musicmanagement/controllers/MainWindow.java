@@ -20,9 +20,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.rmi.CORBA.Util;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -168,17 +166,14 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
                 MovieSongsSearchResultsWindow.setMovie(songs.get(0).getMovie());
                 MovieSongsSearchResultsWindow.setSongs(songs);
-                Utils.openWindow(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 500, 500);
+                Utils.openWindow(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
 
             } catch (NumberFormatException ex) {
                 ex.printStackTrace();
                 Utils.showError("Invalid search parameter");
 
             }
-
-
         }
-
     }
 
     private void setupCloseActions() {

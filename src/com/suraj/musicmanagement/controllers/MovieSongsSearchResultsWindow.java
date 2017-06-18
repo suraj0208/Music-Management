@@ -168,7 +168,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     private void setMovieDetails() {
         lblMovieName.setText(movie.getName());
-        lblMovieLanguage.setText("Language: " + movie.getLanguage());
+        lblMovieLanguage.setText("Language: " + movie.getLanguage().getName());
         lblMovieYear.setText("Year: " + movie.getYear());
         lblMovieRecordNumber.setText("Record No: " + movie.getRecordNo());
     }

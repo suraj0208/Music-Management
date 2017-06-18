@@ -56,7 +56,7 @@ public class DatabaseHelper {
 
             String query =
                     "INSERT INTO " + DATABASE_MOVIES_TABLE_NAME + " (movie_name,movie_year,language_id,movie_record_no) " +
-                            "VALUES('" + movie.getName() + "'," + movie.getYear() + "," + movie.getLanguageId() + "," + movie.getRecordNo() + ");";
+                            "VALUES('" + movie.getName() + "'," + movie.getYear() + "," + movie.getLanguage().getId() + "," + movie.getRecordNo() + ");";
 
             statement.executeUpdate(query);
 
@@ -154,11 +154,11 @@ public class DatabaseHelper {
 
             while (resultSet.next()) {
                 Movie movie = new Movie();
+                Language language = new Language(resultSet.getInt(4),resultSet.getString(5));
                 movie.setId(resultSet.getInt(1));
                 movie.setName(resultSet.getString(2));
                 movie.setYear(resultSet.getInt(3));
-                movie.setLanguageId(resultSet.getInt(4));
-                movie.setLanguage(resultSet.getString(5));
+                movie.setLanguage(language);
                 movie.setRecordNo(resultSet.getInt(6));
                 languageArrayList.add(movie);
             }
@@ -280,8 +280,8 @@ public class DatabaseHelper {
                 movie.setId(resultSet.getInt(1));
                 movie.setName(resultSet.getString(2));
                 movie.setYear(resultSet.getInt(3));
-                movie.setLanguageId(resultSet.getInt(4));
-                movie.setLanguage(resultSet.getString(5));
+                Language language  = new Language(resultSet.getInt(4),resultSet.getString(5));
+                movie.setLanguage(language);
                 movie.setRecordNo(resultSet.getInt(6));
                 return movie;
             }
@@ -533,7 +533,7 @@ public class DatabaseHelper {
             PreparedStatement statement = connection.prepareStatement("UPDATE Movies SET movie_name=?,movie_year=?,language_id=?,movie_record_no=? where movie_id=?;");
             statement.setString(1, movie.getName());
             statement.setInt(2, movie.getYear());
-            statement.setInt(3, movie.getLanguageId());
+            statement.setInt(3, movie.getLanguage().getId());
             statement.setInt(4, movie.getRecordNo());
             statement.setInt(5, movie.getId());
 
