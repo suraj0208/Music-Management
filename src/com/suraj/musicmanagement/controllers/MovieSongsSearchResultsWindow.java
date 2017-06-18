@@ -1,8 +1,6 @@
 package com.suraj.musicmanagement.controllers;
 
-import com.suraj.musicmanagement.data.Artist;
-import com.suraj.musicmanagement.data.Movie;
-import com.suraj.musicmanagement.data.Song;
+import com.suraj.musicmanagement.data.*;
 import com.suraj.musicmanagement.interfaces.MovieEditedCallBack;
 import com.suraj.musicmanagement.interfaces.SongEditedCallBack;
 import javafx.application.Application;
@@ -109,7 +107,6 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
         TableColumn<Song, String> tableColumnArtists = new TableColumn<>("Artists");
         tableColumnArtists.setMinWidth(300);
-        tableColumnArtists.setCellValueFactory(new PropertyValueFactory<>("artists"));
 
         tableColumnArtists.setCellValueFactory(param -> {
             ArrayList<Artist> artists = param.getValue().getArtists();
@@ -127,6 +124,24 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
             return new SimpleStringProperty(stringBuffer.toString());
         });
 
+        TableColumn<Song, String> tableColumnLyricist = new TableColumn<>("Lyricist");
+        tableColumnLyricist.setMinWidth(150);
+
+        tableColumnLyricist.setCellValueFactory(param -> {
+            Lyricist lyricist = param.getValue().getLyricist();
+            return new SimpleStringProperty(lyricist.getName());
+
+        });
+
+        TableColumn<Song, String> tableColumnMusician = new TableColumn<>("Musician");
+        tableColumnMusician.setMinWidth(150);
+
+        tableColumnMusician.setCellValueFactory(param -> {
+            Musician musician = param.getValue().getMusician();
+            return new SimpleStringProperty(musician.getName());
+
+        });
+
 
         ObservableList<Song> songObservableList = FXCollections.observableArrayList();
 
@@ -134,6 +149,8 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
         tblSearchResults.getColumns().add(tableColumnSongName);
         tblSearchResults.getColumns().add(tableColumnArtists);
+        tblSearchResults.getColumns().add(tableColumnLyricist);
+        tblSearchResults.getColumns().add(tableColumnMusician);
 
         tblSearchResults.setItems(songObservableList);
 

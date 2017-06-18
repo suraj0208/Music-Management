@@ -3,10 +3,10 @@ package com.suraj.musicmanagement.controllers;
 import com.suraj.musicmanagement.DatabaseHelper;
 import com.suraj.musicmanagement.FxUtilTest;
 import com.suraj.musicmanagement.Utils;
-import com.suraj.musicmanagement.data.Artist;
-import com.suraj.musicmanagement.data.Movie;
-import com.suraj.musicmanagement.data.Song;
+import com.suraj.musicmanagement.data.*;
 import com.suraj.musicmanagement.interfaces.ArtistAddedCallBack;
+import com.suraj.musicmanagement.interfaces.LyricistAddedCallBack;
+import com.suraj.musicmanagement.interfaces.MusicianAddedCallBack;
 import com.suraj.musicmanagement.interfaces.SongEditedCallBack;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 8/6/17.
  */
-public class AddSongWindow extends Application implements Initializable, ArtistAddedCallBack {
+public class AddSongWindow extends Application implements Initializable, ArtistAddedCallBack, LyricistAddedCallBack, MusicianAddedCallBack {
     @FXML
     private TextField txtFieldSongName;
 
@@ -51,7 +51,19 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
     private ComboBox<String> comboBoxArtist4;
 
     @FXML
+    private ComboBox<String> comboBoxLyricist;
+
+    @FXML
+    private ComboBox<String> comboBoxMusician;
+
+    @FXML
     private Button btnAddNewArtist;
+
+    @FXML
+    private Button btnAddNewLyricist;
+
+    @FXML
+    private Button btnAddNewMusician;
 
     @FXML
     private Button btnSaveSong;
@@ -65,10 +77,12 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
     private DatabaseHelper databaseHelper = new DatabaseHelper();
 
     private HashMap<String, Movie> stringMovieHashMap = new HashMap<>();
+    private HashMap<String, Artist> stringArtistHashMap = new HashMap<>();
+    private HashMap<String, Lyricist> stringLyricistHashMap = new HashMap<>();
+    private HashMap<String, Musician> stringMusicianHashMap = new HashMap<>();
 
     private ArrayList<Artist> artists;
 
-    private HashMap<String, Artist> stringArtistHashMap = new HashMap<>();
 
     private static Song song;
 
@@ -85,26 +99,39 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         AddArtistWindow.addArtistAddedCallBack(this);
+        AddLyricistWindow.addLyricistAddedCallBack(this);
+        AddMusicianWindow.addMusicianAddedCallBack(this);
 
         comboBoxArtist1.setOnKeyPressed(event -> {
-            if(event.getCode()== KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnSaveSong.fire();
         });
 
         comboBoxArtist4.setOnKeyPressed(event -> {
-            if(event.getCode()==KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnSaveSong.fire();
         });
 
         btnSaveSong.setOnKeyPressed(event -> {
-            if(event.getCode()==KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnSaveSong.fire();
         });
 
         btnDeleteSong.setOnKeyPressed(event -> {
-            if(event.getCode()==KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnDeleteSong.fire();
         });
+
+        btnAddNewLyricist.setOnAction(event -> {
+            Utils.openWindow(getClass().getResource("../ui/AddLyricistWindow.fxml"), 500, 200);
+            setupCloseActions();
+        });
+
+        btnAddNewMusician.setOnAction(event -> {
+            Utils.openWindow(getClass().getResource("../ui/AddMusicianWindow.fxml"), 500, 200);
+            setupCloseActions();
+        });
+
 
         (new Thread(() -> {
             final ArrayList<Movie> movieArrayList = databaseHelper.getAvailableMovies();
@@ -113,7 +140,6 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
                 for (Movie movie : movieArrayList)
                     comboBoxMovies.getItems().add(movie.getName());
 
-                addArtistsToComboBox();
                 loadSongDetailsIfAvailable();
 
             })).start();
@@ -123,7 +149,12 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
                     stringMovieHashMap.put(movie.getName(), movie);
             })).start();
 
+
         })).start();
+
+        (new Thread(this::addArtistsToComboBox)).start();
+        (new Thread(this::addLyricistsToComboBox)).start();
+        (new Thread(this::addMusiciansToComboBox)).start();
 
 
         btnAddNewArtist.setOnAction(e -> {
@@ -189,7 +220,6 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
         btnDeleteSong.setVisible(false);
 
-
         btnSaveSong.setOnAction(e -> {
             if (!prepareSong())
                 return;
@@ -205,9 +235,48 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
         });
     }
 
+    private void addMusiciansToComboBox() {
+        ArrayList<Musician> musicians = databaseHelper.getAvailableMusicians();
+
+        if (musicians == null) {
+            Utils.showError("Unable to get musicians data");
+            return;
+        }
+
+        comboBoxMusician.getItems().clear();
+
+        for (Musician musician : musicians) {
+            comboBoxMusician.getItems().add(musician.getName());
+            stringMusicianHashMap.put(musician.getName(), musician);
+        }
+
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxMusician, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
+    }
+
+    private void addLyricistsToComboBox() {
+        ArrayList<Lyricist> lyricists = databaseHelper.getAvailableLyricists();
+
+        if (lyricists == null) {
+            Utils.showError("Unable to get lyricists data");
+            return;
+        }
+
+
+        comboBoxLyricist.getItems().clear();
+
+        for (Lyricist lyricist : lyricists) {
+            comboBoxLyricist.getItems().add(lyricist.getName());
+            stringLyricistHashMap.put(lyricist.getName(), lyricist);
+        }
+
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxLyricist, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || objectToCompare.equals(typedText));
+    }
+
     private void setupCloseActions() {
         btnSaveSong.getScene().getWindow().setOnCloseRequest(event -> {
             AddArtistWindow.removeArtistAddedCallBack(this);
+            AddLyricistWindow.removeLyricistAddedCallBack(this);
+            AddMusicianWindow.removeMusicianAddedCallBack(this);
         });
     }
 
@@ -226,6 +295,8 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
                 if (stringComboBoxes[i] != null)
                     stringComboBoxes[i].setValue(song.getArtists().get(i).getName());
 
+            comboBoxLyricist.setValue(song.getLyricist().getName());
+            comboBoxMusician.setValue(song.getMusician().getName());
         }
     }
 
@@ -277,13 +348,25 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
         if (stringArtistHashMap.containsKey(artist4))
             currentArtists.add(stringArtistHashMap.get(artist4));
 
+        Lyricist lyricist = stringLyricistHashMap.get(comboBoxLyricist.getValue());
+
+        if (lyricist == null) {
+            Utils.showError("No such Lyricist");
+            return false;
+        }
+
+        Musician musician = stringMusicianHashMap.get(comboBoxMusician.getValue());
+
+        if (musician == null) {
+            Utils.showError("No such Musician");
+            return false;
+        }
+
         if (song != null) {
-            song = new Song(song.getId(), txtFieldSongName.getText(), movie.getId(), currentArtists);
-            song.setMovie(movie);
+            song = new Song(song.getId(), txtFieldSongName.getText(), movie.getId(), movie, currentArtists, lyricist, musician);
             return true;
         }
-        song = new Song(txtFieldSongName.getText(), movie.getId(), currentArtists);
-        song.setMovie(movie);
+        song = new Song(txtFieldSongName.getText(), movie.getId(), movie, currentArtists, lyricist, musician);
         return true;
     }
 
@@ -343,5 +426,14 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
         songEditedCallBacks.remove(songEditedCallBack);
     }
 
+    @Override
+    public void lyricistAdded() {
+        addLyricistsToComboBox();
+    }
+
+    @Override
+    public void musicianAdded() {
+        addMusiciansToComboBox();
+    }
 }
 

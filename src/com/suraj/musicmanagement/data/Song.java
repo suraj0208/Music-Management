@@ -12,6 +12,25 @@ public class Song {
     private ArrayList<Artist> artists;
     private Movie movie;
 
+    public Lyricist getLyricist() {
+        return lyricist;
+    }
+
+    public void setLyricist(Lyricist lyricist) {
+        this.lyricist = lyricist;
+    }
+
+    public Musician getMusician() {
+        return musician;
+    }
+
+    public void setMusician(Musician musician) {
+        this.musician = musician;
+    }
+
+    private Lyricist lyricist;
+    private Musician musician;
+
     public Song(int id, String name, int movieId) {
         this.id = id;
         this.name = name;
@@ -24,17 +43,23 @@ public class Song {
         this.movieId = movieId;
     }
 
-    public Song(String name, int movieId, ArrayList<Artist> artists) {
+    public Song(String name, int movieId, Movie movie, ArrayList<Artist> artists, Lyricist lyricist, Musician musician) {
         this.name = name;
         this.movieId = movieId;
+        this.movie=movie;
         this.artists = artists;
+        this.lyricist=lyricist;
+        this.musician=musician;
     }
 
-    public Song(int id, String name, int movieId, ArrayList<Artist> artists) {
+    public Song(int id, String name, int movieId, Movie movie,ArrayList<Artist> artists,Lyricist lyricist,Musician musician) {
         this.id=id;
         this.name=name;
         this.movieId=movieId;
+        this.movie=movie;
         this.artists=artists;
+        this.lyricist=lyricist;
+        this.musician=musician;
     }
 
     public int getId() {
