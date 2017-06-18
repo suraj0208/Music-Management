@@ -158,16 +158,8 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
 
         btnAddNewArtist.setOnAction(e -> {
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(getClass().getResource("../ui/AddArtistWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 200));
-                setupCloseActions();
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
+            setupCloseActions();
         });
 
         if (song != null) {

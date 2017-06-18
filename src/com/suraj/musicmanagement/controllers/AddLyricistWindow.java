@@ -102,10 +102,10 @@ public class AddLyricistWindow extends Application implements Initializable {
             });
 
             btnDeleteLyricist.setOnAction(event -> {
-                if(!Utils.confirmDialog("Do you want to delete lyricist and all its songs?"))
+                if (!Utils.confirmDialog("Do you want to delete lyricist and all its songs?"))
                     return;
 
-                if(new DatabaseHelper().deleteLyricist(lyricist)){
+                if (new DatabaseHelper().deleteLyricist(lyricist)) {
                     Utils.showInfo("Lyricist Deleted");
 
                     if (lyricistAddedCallBacks != null)
@@ -114,7 +114,7 @@ public class AddLyricistWindow extends Application implements Initializable {
                                 lyricistAddedCallBack.lyricistAdded();
 
                     closeWindow();
-                }else{
+                } else {
                     Utils.showError("Error Occurred");
                 }
             });

@@ -20,6 +20,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.rmi.CORBA.Util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -73,9 +74,6 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
         ArrayList<Song> songs;
 
-        Parent root;
-        Stage stage;
-
         if (searchFieldComboBox.getValue().equals("Song")) {
             songs = databaseHelper.findSong(searchName);
 
@@ -98,10 +96,8 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             SongsSearchResultWindow.setSongs(songs);
             SongsSearchResultWindow.setSearchName(searchName);
-            root = FXMLLoader.load(getClass().getResource("../ui/SongsSearchResultWindow.fxml"));
-            stage = new Stage();
-            stage.setScene(new Scene(root, 800, 500));
-            stage.show();
+
+            Utils.openWindow(getClass().getResource("../ui/SongsSearchResultWindow.fxml"), 800, 500);
 
         } else if (searchFieldComboBox.getValue().equals("Movie")) {
 
@@ -128,11 +124,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             setupCloseActions();
 
             MovieSongsSearchResultsWindow.setSongs(songs);
-            root = FXMLLoader.load(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"));
-            stage = new Stage();
-            stage.setScene(new Scene(root, 800, 500));
-            stage.show();
-
+            Utils.openWindow(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
 
         } else if (searchFieldComboBox.getValue().equals("Artist")) {
             songs = databaseHelper.getSongsForArtist(searchName);
@@ -154,10 +146,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             ArtistSongsSearchResults.setSearchName(searchName);
             ArtistSongsSearchResults.setSongs(songs);
-            root = FXMLLoader.load(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"));
-            stage = new Stage();
-            stage.setScene(new Scene(root, 750, 500));
-            stage.show();
+            Utils.openWindow(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"), 750, 500);
         } else if (searchFieldComboBox.getValue().equals("Record No")) {
             try {
                 songs = databaseHelper.getSongsForMovie(Integer.parseInt(searchName));
@@ -179,10 +168,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
                 MovieSongsSearchResultsWindow.setMovie(songs.get(0).getMovie());
                 MovieSongsSearchResultsWindow.setSongs(songs);
-                root = FXMLLoader.load(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"));
-                stage = new Stage();
-                stage.setScene(new Scene(root, 500, 500));
-                stage.show();
+                Utils.openWindow(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 500, 500);
 
             } catch (NumberFormatException ex) {
                 ex.printStackTrace();
@@ -269,16 +255,8 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         MenuItem addMusicianMenuItem = menuMusician.getItems().get(0);
 
         addMusicianMenuItem.setOnAction(e -> {
-            Parent root = null;
-            try {
-                setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("../ui/AddMusicianWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 200));
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            setupCloseActions();
+            Utils.openWindow(getClass().getResource("../ui/AddMusicianWindow.fxml"), 500, 200);
         });
     }
 
@@ -288,21 +266,10 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         MenuItem addLyricistMenuItem = menuSong.getItems().get(0);
 
         addLyricistMenuItem.setOnAction(e -> {
-            Parent root = null;
-            try {
-                AddSongWindow.setSong(null);
-                setupCloseActions();
+            AddSongWindow.setSong(null);
+            setupCloseActions();
 
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("../ui/AddLyricistWindow.fxml"));
-
-                root = loader.load();
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 200));
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            Utils.openWindow(getClass().getResource("../ui/AddLyricistWindow.fxml"), 500, 200);
         });
 
     }
@@ -337,17 +304,9 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         MenuItem displayAllItem = menuSong.getItems().get(0);
 
         displayAllItem.setOnAction(event -> {
-            Parent root = null;
-            try {
-                AllRecordsSearchWindow.setRecords(databaseHelper.getAllRecords());
-                setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("../ui/AllRecordsSearchWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 1050, 800));
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            AllRecordsSearchWindow.setRecords(databaseHelper.getAllRecords());
+            setupCloseActions();
+            Utils.openWindow(getClass().getResource("../ui/AllRecordsSearchWindow.fxml"), 1050, 800);
         });
 
     }
@@ -358,31 +317,15 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         MenuItem addArtistMenuItem = menuSong.getItems().get(0);
 
         addArtistMenuItem.setOnAction(e -> {
-            Parent root = null;
-            try {
-                setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("../ui/AddArtistWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 200));
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            setupCloseActions();
+            Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
         });
 
         MenuItem editArtistMenuItem = menuSong.getItems().get(1);
 
         editArtistMenuItem.setOnAction(e -> {
-            Parent root = null;
-            try {
-                setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("../ui/SearchArtistInputWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 200));
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            setupCloseActions();
+            Utils.openWindow(getClass().getResource("../ui/SearchArtistInputWindow.fxml"), 500, 200);
 
         });
     }
@@ -393,21 +336,9 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         MenuItem addSongMenuItem = menuSong.getItems().get(0);
 
         addSongMenuItem.setOnAction(e -> {
-            Parent root = null;
-            try {
-                AddSongWindow.setSong(null);
-                setupCloseActions();
-
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("../ui/AddSongWindow.fxml"));
-
-                root = loader.load();
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 480));
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            AddSongWindow.setSong(null);
+            setupCloseActions();
+            Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
 
         });
     }
@@ -418,17 +349,9 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         MenuItem addMovieMenuItem = menuMovie.getItems().get(0);
 
         addMovieMenuItem.setOnAction(e -> {
-            Parent root = null;
-            try {
-                AddMovieWindow.setMovie(null);
-                setupCloseActions();
-                root = FXMLLoader.load(getClass().getResource("../ui/AddMovieWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 300));
-                stage.show();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            AddMovieWindow.setMovie(null);
+            setupCloseActions();
+            Utils.openWindow(getClass().getResource("../ui/AddMovieWindow.fxml"), 500, 300);
         });
     }
 
@@ -484,7 +407,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
         if (edited != null) {
             movieNames.add(edited.getName());
-            recordNumbers.add(""+edited.getRecordNo());
+            recordNumbers.add("" + edited.getRecordNo());
             selectionChanged();
         } else {
             (new Thread(() -> {

@@ -77,28 +77,19 @@ public class AddMovieWindow extends Application implements Initializable, Langua
         });
 
         btnSaveMovie.setOnKeyPressed(event -> {
-            if(event.getCode()==KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnSaveMovie.fire();
         });
 
         btnDeleteMovie.setOnKeyPressed(event -> {
-            if(event.getCode()==KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnDeleteMovie.fire();
         });
 
         btnAddNewLanguage.setOnAction(e -> {
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(getClass().getResource("../ui/AddLanguageWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 200));
+            Utils.openWindow(getClass().getResource("../ui/AddLanguageWindow.fxml"), 500, 200);
+            AddLanguageWindow.setLanguageAddedCallBack(this);
 
-                AddLanguageWindow.setLanguageAddedCallBack(this);
-                stage.show();
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
         });
 
         addLanguagesToComboBox();
@@ -233,13 +224,14 @@ public class AddMovieWindow extends Application implements Initializable, Langua
         Language selectedLanguage = languageArrayList.get(0);
 
         for (Language language : languageArrayList)
-            if (language.getName().equals(comboMovieLanguage.getValue())) {
+            if (language.getName().equals(comboMovieLanguage.getSelectionModel().getSelectedItem())) {
                 selectedLanguage = language;
                 break;
             }
 
         if (movie != null) {
             movie = new Movie(movie.getId(), movieName, movieYear, selectedLanguage.getId(), movieRecordNo);
+            movie.setLanguage(selectedLanguage.getName());
             return true;
         }
 

@@ -1,5 +1,6 @@
 package com.suraj.musicmanagement.controllers;
 
+import com.suraj.musicmanagement.Utils;
 import com.suraj.musicmanagement.data.*;
 import com.suraj.musicmanagement.interfaces.MovieEditedCallBack;
 import com.suraj.musicmanagement.interfaces.SongEditedCallBack;
@@ -83,19 +84,9 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
     private void setupEditButton() {
         btnEditMovie.setOnAction(e -> {
             AddMovieWindow.setMovie(movie);
-            Parent root = null;
-            try {
-                AddMovieWindow.addMovieEditedCallBack(this);
-                setupCloseEvent();
-                root = FXMLLoader.load(getClass().getResource("../ui/AddMovieWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 300));
-                stage.show();
-
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            AddMovieWindow.addMovieEditedCallBack(this);
+            setupCloseEvent();
+            Utils.openWindow(getClass().getResource("../ui/AddMovieWindow.fxml"), 500, 300);
         });
     }
 
@@ -160,22 +151,13 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
                 if (event.getClickCount() == 2 && tableRow.getItem() != null) {
                     AddSongWindow.setSong(tableRow.getItem());
 
-                    Parent root = null;
-                    try {
-                        AddSongWindow.addSongEditedCallBack(this);
+                    AddSongWindow.addSongEditedCallBack(this);
 
-                        (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
-                            AddSongWindow.removeSongEditedCallBack(this);
-                        });
+                    (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
+                        AddSongWindow.removeSongEditedCallBack(this);
+                    });
 
-                        root = FXMLLoader.load(getClass().getResource("../ui/AddSongWindow.fxml"));
-                        Stage stage = new Stage();
-                        stage.setScene(new Scene(root, 500, 400));
-                        stage.show();
-
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+                    Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
 
                 }
             });

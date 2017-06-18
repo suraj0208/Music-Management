@@ -47,36 +47,28 @@ public class SearchArtistInputWindow extends Application implements Initializabl
         comboBoxSearchName.getItems().addAll(artists);
 
         comboBoxSearchName.setOnKeyPressed(event -> {
-            if(event.getCode()== KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnSearchArtist.fire();
         });
 
         btnSearchArtist.setOnKeyPressed(event -> {
-            if(event.getCode()==KeyCode.ENTER)
+            if (event.getCode() == KeyCode.ENTER)
                 btnSearchArtist.fire();
         });
 
-        FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearchName,(typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || typedText.toLowerCase().equals(objectToCompare.toLowerCase()));
+        FxUtilTest.autoCompleteComboBoxPlus(comboBoxSearchName, (typedText, objectToCompare) -> objectToCompare.toLowerCase().contains(typedText.toLowerCase()) || typedText.toLowerCase().equals(objectToCompare.toLowerCase()));
 
         btnSearchArtist.setOnAction(event -> {
-            Parent root = null;
-            try {
-                Artist artist = databaseHelper.getArtistFromName(comboBoxSearchName.getValue());
+            Artist artist = databaseHelper.getArtistFromName(comboBoxSearchName.getValue());
 
-                if(artist==null){
-                    Utils.showError("Unable to find artist");
-                    return;
-                }
-
-                AddArtistWindow.setArtist(artist);
-                root = FXMLLoader.load(getClass().getResource("../ui/AddArtistWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 200));
-                stage.show();
-                closeWindow();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            if (artist == null) {
+                Utils.showError("Unable to find artist");
+                return;
             }
+
+            AddArtistWindow.setArtist(artist);
+            Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
+            closeWindow();
         });
     }
 

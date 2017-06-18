@@ -1,5 +1,6 @@
 package com.suraj.musicmanagement.controllers;
 
+import com.suraj.musicmanagement.Utils;
 import com.suraj.musicmanagement.data.Artist;
 import com.suraj.musicmanagement.data.Lyricist;
 import com.suraj.musicmanagement.data.Musician;
@@ -157,23 +158,13 @@ public class SongsSearchResultWindow extends Application implements Initializabl
                 if (event.getClickCount() == 2 && tableRow.getItem() != null) {
                     AddSongWindow.setSong(tableRow.getItem());
 
-                    Parent root = null;
-                    try {
-                        AddSongWindow.addSongEditedCallBack(this);
+                    AddSongWindow.addSongEditedCallBack(this);
 
-                        (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
-                            AddSongWindow.removeSongEditedCallBack(this);
-                        });
+                    (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
+                        AddSongWindow.removeSongEditedCallBack(this);
+                    });
 
-                        root = FXMLLoader.load(getClass().getResource("../ui/AddSongWindow.fxml"));
-                        Stage stage = new Stage();
-                        stage.setScene(new Scene(root, 500, 400));
-                        stage.show();
-
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-
+                    Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
                 }
             });
             return tableRow;
