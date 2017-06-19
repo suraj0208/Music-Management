@@ -624,7 +624,6 @@ public class DatabaseHelper {
         }
 
         return null;
-
     }
 
     public boolean deleteArtist(Artist artist) {
@@ -906,6 +905,76 @@ public class DatabaseHelper {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return null;
+    }
+
+    public HashSet<String> getAllLyricists() {
+        HashSet<String> allLyricists = new HashSet<>();
+
+        try {
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT lyricist_name FROM " + DATABASE_LYRICISTS_TABLE_NAME +  " ;");
+
+            while (resultSet.next())
+                allLyricists.add(resultSet.getString(1));
+
+            return allLyricists;
+
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public Lyricist getLyricistFromName(String name) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + DATABASE_LYRICISTS_TABLE_NAME + " WHERE lyricist_name=?;");
+            statement.setString(1, name);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return new Lyricist(resultSet.getInt(1),resultSet.getString(2));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public HashSet<String> getAllMusicians() {
+        HashSet<String> allMusicians = new HashSet<>();
+
+        try {
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT musician_name FROM " + DATABASE_MUSICIANS_TABLE_NAME +  ";");
+
+            while (resultSet.next())
+                allMusicians.add(resultSet.getString(1));
+
+            return allMusicians;
+
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public Musician getMusicianFromName(String name) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + DATABASE_MUSICIANS_TABLE_NAME + " WHERE musician_name=?;");
+            statement.setString(1, name);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return new Musician(resultSet.getInt(1),resultSet.getString(2));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }

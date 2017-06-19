@@ -5,9 +5,7 @@ import com.suraj.musicmanagement.FxUtilTest;
 import com.suraj.musicmanagement.Utils;
 import com.suraj.musicmanagement.data.Movie;
 import com.suraj.musicmanagement.data.Song;
-import com.suraj.musicmanagement.interfaces.ArtistAddedCallBack;
-import com.suraj.musicmanagement.interfaces.MovieEditedCallBack;
-import com.suraj.musicmanagement.interfaces.SongEditedCallBack;
+import com.suraj.musicmanagement.interfaces.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +28,7 @@ import java.util.ResourceBundle;
 /**
  * Created by suraj on 7/6/17.
  */
-public class MainWindow extends Application implements Initializable, MovieEditedCallBack, SongEditedCallBack, ArtistAddedCallBack {
+public class MainWindow extends Application implements Initializable, MovieEditedCallBack, SongEditedCallBack, ArtistAddedCallBack, LyricistAddedCallBack, MusicianAddedCallBack {
     @FXML
     private Button btnSearch;
 
@@ -179,9 +177,11 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
     private void setupCloseActions() {
         (btnSearch.getScene()).getWindow().setOnCloseRequest(event -> {
-            AddSongWindow.removeSongEditedCallBack(this);
             AddMovieWindow.removeMovieEditedCallBack(this);
+            AddSongWindow.removeSongEditedCallBack(this);
             AddArtistWindow.removeArtistAddedCallBack(this);
+            AddLyricistWindow.removeLyricistAddedCallBack(this);
+            AddMusicianWindow.removeMusicianAddedCallBack(this);
         });
     }
 
@@ -252,7 +252,16 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
         addMusicianMenuItem.setOnAction(e -> {
             setupCloseActions();
+            AddMusicianWindow.setMusician(null);
             Utils.openWindow(getClass().getResource("../ui/AddMusicianWindow.fxml"), 500, 200);
+        });
+
+        MenuItem editMusicianMenuItem = menuMusician.getItems().get(1);
+
+        editMusicianMenuItem.setOnAction(e -> {
+            setupCloseActions();
+            AddMusicianWindow.addMusicianAddedCallBack(this);
+            Utils.openWindow(getClass().getResource("../ui/SearchMusicianInputWindow.fxml"), 500, 200);
         });
     }
 
@@ -264,8 +273,16 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addLyricistMenuItem.setOnAction(e -> {
             AddSongWindow.setSong(null);
             setupCloseActions();
-
+            AddLyricistWindow.setLyricist(null);
             Utils.openWindow(getClass().getResource("../ui/AddLyricistWindow.fxml"), 500, 200);
+        });
+
+        MenuItem editLyricistMenuItem = menuSong.getItems().get(1);
+
+        editLyricistMenuItem.setOnAction(e -> {
+            setupCloseActions();
+            AddLyricistWindow.addLyricistAddedCallBack(this);
+            Utils.openWindow(getClass().getResource("../ui/SearchLyricistInputWindow.fxml"), 500, 200);
         });
 
     }
@@ -314,6 +331,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
         addArtistMenuItem.setOnAction(e -> {
             setupCloseActions();
+            AddArtistWindow.setArtist(null);
             Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
         });
 
@@ -429,6 +447,22 @@ public class MainWindow extends Application implements Initializable, MovieEdite
     public void artistAdded() {
         (new Thread(() -> {
             artistNames = databaseHelper.getAllArtists();
+            songNames = databaseHelper.getAllSongs();
+            selectionChanged();
+        })).start();
+    }
+
+    @Override
+    public void lyricistAdded() {
+        (new Thread(() -> {
+            songNames = databaseHelper.getAllSongs();
+            selectionChanged();
+        })).start();
+    }
+
+    @Override
+    public void musicianAdded() {
+        (new Thread(() -> {
             songNames = databaseHelper.getAllSongs();
             selectionChanged();
         })).start();

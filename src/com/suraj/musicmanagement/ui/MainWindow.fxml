@@ -62,11 +62,13 @@
                         <Menu mnemonicParsing="false" text="Lyricists">
                             <items>
                                 <MenuItem mnemonicParsing="false" text="Add lyricist"/>
+                                <MenuItem mnemonicParsing="false" text="Edit lyricist"/>
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Musicians">
                             <items>
                                 <MenuItem mnemonicParsing="false" text="Add musician"/>
+                                <MenuItem mnemonicParsing="false" text="Edit musician"/>
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Records">

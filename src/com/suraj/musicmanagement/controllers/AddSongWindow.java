@@ -123,11 +123,13 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
         });
 
         btnAddNewLyricist.setOnAction(event -> {
+            AddLyricistWindow.setLyricist(null);
             Utils.openWindow(getClass().getResource("../ui/AddLyricistWindow.fxml"), 500, 200);
             setupCloseActions();
         });
 
         btnAddNewMusician.setOnAction(event -> {
+            AddMusicianWindow.setMusician(null);
             Utils.openWindow(getClass().getResource("../ui/AddMusicianWindow.fxml"), 500, 200);
             setupCloseActions();
         });
@@ -158,6 +160,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
 
         btnAddNewArtist.setOnAction(e -> {
+            AddArtistWindow.setArtist(null);
             Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
             setupCloseActions();
         });
