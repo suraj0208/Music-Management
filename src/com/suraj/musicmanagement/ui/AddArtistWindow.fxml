@@ -21,17 +21,17 @@
         </Label>
         <TextField fx:id="txtFieldArtistName" prefHeight="32.0" prefWidth="373.0" promptText="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="0">
           <GridPane.margin>
-            <Insets left="5.0" right="5.0" fx:id="x2" />
+            <Insets left="5.0" right="10.0" />
           </GridPane.margin>
         </TextField>
         <GridPane hgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
           <children>
-            <Button fx:id="btnSaveArtist" mnemonicParsing="false" prefHeight="28.0" prefWidth="397.0" text="Save" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Button fx:id="btnSaveArtist" mnemonicParsing="false" prefHeight="28.0" prefWidth="188.99990000000253" text="Save" GridPane.columnIndex="0" GridPane.rowIndex="0">
               <GridPane.margin>
                 <Insets />
               </GridPane.margin>
             </Button>
-            <Button id="btnSaveArtist" fx:id="btnDeleteArtist" mnemonicParsing="false" prefHeight="28.0" prefWidth="397.0" text="Delete" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Button id="btnSaveArtist" fx:id="btnDeleteArtist" mnemonicParsing="false" prefHeight="28.0" prefWidth="189.0" text="Delete" GridPane.columnIndex="1" GridPane.rowIndex="0" />
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -46,8 +46,8 @@
         </GridPane>
       </children>
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="299.0" minWidth="10.0" prefWidth="67.0" />
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.0" minWidth="10.0" prefWidth="402.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="299.0" minWidth="10.0" prefWidth="68.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.0" minWidth="10.0" prefWidth="411.0" />
       </columnConstraints>
       <rowConstraints>
         <RowConstraints maxHeight="98.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />

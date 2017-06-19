@@ -12,7 +12,7 @@
         <HBox prefHeight="100.0" prefWidth="200.0">
             <children>
                 <ComboBox id="txtSearch" fx:id="comboBoxSearch" editable="true" onKeyPressed="#onKeyPressed"
-                          prefWidth="310.0" promptText="Search for song/movie">
+                          prefWidth="280.0" promptText="Search for song/movie">
                     <items>
                         <FXCollections fx:factory="observableArrayList"/>
                     </items>

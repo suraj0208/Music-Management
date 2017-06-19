@@ -59,6 +59,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/MainWindow.fxml"));
         primaryStage.setTitle("Music Management");
         primaryStage.setScene(new Scene(root, 500, 200));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -166,7 +167,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
                 MovieSongsSearchResultsWindow.setMovie(songs.get(0).getMovie());
                 MovieSongsSearchResultsWindow.setSongs(songs);
-                Utils.openWindow(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
+                Utils.openWindowMaximized(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
 
             } catch (NumberFormatException ex) {
                 ex.printStackTrace();
@@ -301,7 +302,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         displayAllItem.setOnAction(event -> {
             AllRecordsSearchWindow.setRecords(databaseHelper.getAllRecords());
             setupCloseActions();
-            Utils.openWindow(getClass().getResource("../ui/AllRecordsSearchWindow.fxml"), 1050, 800);
+            Utils.openWindowMaximized(getClass().getResource("../ui/AllRecordsSearchWindow.fxml"), 1050, 800);
         });
 
     }
