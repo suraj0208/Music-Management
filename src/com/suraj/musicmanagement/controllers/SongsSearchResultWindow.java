@@ -1,6 +1,9 @@
 package com.suraj.musicmanagement.controllers;
 
+import com.suraj.musicmanagement.Utils;
 import com.suraj.musicmanagement.data.Artist;
+import com.suraj.musicmanagement.data.Lyricist;
+import com.suraj.musicmanagement.data.Musician;
 import com.suraj.musicmanagement.data.Song;
 import com.suraj.musicmanagement.interfaces.SongEditedCallBack;
 import javafx.application.Application;
@@ -31,7 +34,6 @@ import java.util.ResourceBundle;
  * Created by suraj on 8/6/17.
  */
 public class SongsSearchResultWindow extends Application implements Initializable, SongEditedCallBack {
-
     @FXML
     private Label lblSearchSongName;
 
@@ -91,6 +93,24 @@ public class SongsSearchResultWindow extends Application implements Initializabl
             return new SimpleStringProperty(stringBuffer.toString());
         });
 
+        TableColumn<Song, String> tableColumnLyricist = new TableColumn<>("Lyricist");
+        tableColumnLyricist.setMinWidth(150);
+
+        tableColumnLyricist.setCellValueFactory(param -> {
+            Lyricist lyricist = param.getValue().getLyricist();
+            return new SimpleStringProperty(lyricist.getName());
+
+        });
+
+        TableColumn<Song, String> tableColumnMusician = new TableColumn<>("Musician");
+        tableColumnMusician.setMinWidth(150);
+
+        tableColumnMusician.setCellValueFactory(param -> {
+            Musician musician = param.getValue().getMusician();
+            return new SimpleStringProperty(musician.getName());
+
+        });
+
         TableColumn<Song, Integer> tableColumnRecordNo = new TableColumn<>("Record No");
         tableColumnRecordNo.setMinWidth(100);
         tableColumnRecordNo.setCellValueFactory(param -> new ObservableValue<Integer>() {
@@ -126,6 +146,8 @@ public class SongsSearchResultWindow extends Application implements Initializabl
 
         tblSearchResults.getColumns().add(tableColumnMovie);
         tblSearchResults.getColumns().add(tableColumnArtists);
+        tblSearchResults.getColumns().add(tableColumnLyricist);
+        tblSearchResults.getColumns().add(tableColumnMusician);
         tblSearchResults.getColumns().add(tableColumnRecordNo);
 
         tblSearchResults.setItems(songObservableList);
@@ -136,23 +158,13 @@ public class SongsSearchResultWindow extends Application implements Initializabl
                 if (event.getClickCount() == 2 && tableRow.getItem() != null) {
                     AddSongWindow.setSong(tableRow.getItem());
 
-                    Parent root = null;
-                    try {
-                        AddSongWindow.addSongEditedCallBack(this);
+                    AddSongWindow.addSongEditedCallBack(this);
 
-                        (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
-                            AddSongWindow.removeSongEditedCallBack(this);
-                        });
+                    (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
+                        AddSongWindow.removeSongEditedCallBack(this);
+                    });
 
-                        root = FXMLLoader.load(getClass().getResource("../ui/AddSongWindow.fxml"));
-                        Stage stage = new Stage();
-                        stage.setScene(new Scene(root, 500, 400));
-                        stage.show();
-
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-
+                    Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
                 }
             });
             return tableRow;

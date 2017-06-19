@@ -22,8 +22,8 @@ public class DatabaseHelper {
     private static final String DATABASE_SONGS_TABLE_NAME = "Songs";
     private static final String DATABASE_ARTISTS_TABLE_NAME = "Artists";
     private static final String DATABASE_LYRICISTS_TABLE_NAME = "Lyricists";
+    private static final String DATABASE_MUSICIANS_TABLE_NAME = "Musicians";
     private static final String DATABASE_SONGS_ARTISTS_TABLE_NAME = "Songs_Artists";
-    private static final String DATABASE_SONGS_LYRICISTS_TABLE_NAME = "Songs_Lyricists";
 
 
     private Connection connection;
@@ -56,7 +56,7 @@ public class DatabaseHelper {
 
             String query =
                     "INSERT INTO " + DATABASE_MOVIES_TABLE_NAME + " (movie_name,movie_year,language_id,movie_record_no) " +
-                            "VALUES('" + movie.getName() + "'," + movie.getYear() + "," + movie.getLanguageId() + "," + movie.getRecordNo() + ");";
+                            "VALUES('" + movie.getName() + "'," + movie.getYear() + "," + movie.getLanguage().getId() + "," + movie.getRecordNo() + ");";
 
             statement.executeUpdate(query);
 
@@ -96,14 +96,14 @@ public class DatabaseHelper {
         try {
             Statement statement = connection.createStatement();
 
-            String query = "INSERT INTO " + DATABASE_SONGS_TABLE_NAME + " (song_name, movie_id) " +
-                    "VALUES('" + song.getName() + "'," + song.getMovieId() + ");";
+            String query = "INSERT INTO " + DATABASE_SONGS_TABLE_NAME + " (song_name, movie_id, lyricist_id, musician_id) " +
+                    "VALUES('" + song.getName() + "'," + song.getMovie().getId() + ", " + song.getLyricist().getId() + ", " + song.getMusician().getId() + ");";
 
             statement.executeUpdate(query);
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT song_id FROM " + DATABASE_SONGS_TABLE_NAME + " WHERE song_name = ? AND movie_id = ?;");
             preparedStatement.setString(1, song.getName());
-            preparedStatement.setInt(2, song.getMovieId());
+            preparedStatement.setInt(2, song.getMovie().getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
             int songId = -1;
@@ -154,11 +154,11 @@ public class DatabaseHelper {
 
             while (resultSet.next()) {
                 Movie movie = new Movie();
+                Language language = new Language(resultSet.getInt(4), resultSet.getString(5));
                 movie.setId(resultSet.getInt(1));
                 movie.setName(resultSet.getString(2));
                 movie.setYear(resultSet.getInt(3));
-                movie.setLanguageId(resultSet.getInt(4));
-                movie.setLanguage(resultSet.getString(5));
+                movie.setLanguage(language);
                 movie.setRecordNo(resultSet.getInt(6));
                 languageArrayList.add(movie);
             }
@@ -270,7 +270,7 @@ public class DatabaseHelper {
         try {
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT movie_id, movie_name, movie_year, Movies.language_id, language_name, movie_record_no FROM "
-                    + DATABASE_MOVIES_TABLE_NAME + " INNER JOIN " + DATABASE_LANGUAGES_TABLE_NAME + " ON Movies.language_id = Languages.language_id where movie_name=?;");
+                    + DATABASE_MOVIES_TABLE_NAME + " INNER JOIN " + DATABASE_LANGUAGES_TABLE_NAME + " ON Movies.language_id = Languages.language_id WHERE movie_name=?;");
             preparedStatement.setString(1, movieName);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -280,8 +280,8 @@ public class DatabaseHelper {
                 movie.setId(resultSet.getInt(1));
                 movie.setName(resultSet.getString(2));
                 movie.setYear(resultSet.getInt(3));
-                movie.setLanguageId(resultSet.getInt(4));
-                movie.setLanguage(resultSet.getString(5));
+                Language language = new Language(resultSet.getInt(4), resultSet.getString(5));
+                movie.setLanguage(language);
                 movie.setRecordNo(resultSet.getInt(6));
                 return movie;
             }
@@ -304,7 +304,7 @@ public class DatabaseHelper {
             if (id == -1)
                 return null;
 
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id where Artists.artist_id = ?);");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name,Lyricists.lyricist_id,Lyricists.lyricist_name,Musicians.musician_id,Musicians.musician_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id INNER JOIN Lyricists ON Lyricists.lyricist_id=Songs.lyricist_id INNER JOIN Musicians ON Musicians.musician_id=Songs.musician_id WHERE Songs.song_id in ( SELECT Songs.song_id FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Artists.artist_id = ?);");
             preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -316,10 +316,13 @@ public class DatabaseHelper {
                 Song currentSong = currentHashMap.get(resultSet.getInt(1));
 
                 if (currentSong == null) {
-                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3));
+                    Lyricist lyricist  = new Lyricist(resultSet.getInt(9),resultSet.getString(10));
+                    Musician musician  = new Musician(resultSet.getInt(11),resultSet.getString(12));
+
+                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2),previousMovie,null,lyricist,musician);
 
                     if (previousMovie != null) {
-                        if (currentSong.getMovieId() == previousMovie.getId()) {
+                        if (currentSong.getMovie() != null && currentSong.getMovie().getId() == previousMovie.getId()) {
                             currentSong.setMovie(previousMovie);
                         } else {
                             previousMovie = new Movie();
@@ -330,7 +333,7 @@ public class DatabaseHelper {
                             currentSong.setMovie(previousMovie);
                         }
 
-                    } else if (previousMovie == null) {
+                    } else {
                         previousMovie = new Movie();
                         previousMovie.setId(resultSet.getInt(3));
                         previousMovie.setName(resultSet.getString(4));
@@ -378,7 +381,7 @@ public class DatabaseHelper {
             return null;
         }
 
-        String query = "SELECT Songs.song_id, song_name, Artists.artist_id, artist_name FROM Movies INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Songs_Artists.artist_id=Artists.artist_id WHERE Movies.movie_id=?;";
+        String query = "SELECT Songs.song_id, song_name, Artists.artist_id, artist_name, Lyricists.lyricist_id, Lyricists.lyricist_name, Musicians.musician_id, Musicians.musician_name FROM Movies INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Songs_Artists.artist_id=Artists.artist_id INNER JOIN Lyricists on Lyricists.lyricist_id=Songs.lyricist_id INNER JOIN Musicians ON Musicians.musician_id=Songs.musician_id WHERE Movies.movie_id=?;";
 
 
         try {
@@ -393,7 +396,10 @@ public class DatabaseHelper {
                 Song currentSong = songs.get(songId);
 
                 if (currentSong == null) {
-                    currentSong = new Song(songId, resultSet.getString(2), movie.getId());
+                    Lyricist lyricist = new Lyricist(resultSet.getInt(5), resultSet.getString(6));
+                    Musician musician = new Musician(resultSet.getInt(7), resultSet.getString(8));
+
+                    currentSong = new Song(songId, resultSet.getString(2), movie, null, lyricist, musician);
                     currentSong.setMovie(movie);
                     Artist artist = new Artist();
                     artist.setId(resultSet.getInt(3));
@@ -426,7 +432,7 @@ public class DatabaseHelper {
         HashMap<Integer, Song> currentHashMap = new HashMap<>();
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id WHERE Songs.song_name = ?;");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Songs.song_id,Songs.song_name, Movies.movie_id,Movies.movie_name,Movies.movie_year,Movies.movie_record_no,Artists.artist_id, Artists.artist_name, Lyricists.lyricist_id, Lyricists.lyricist_name, Musicians.musician_id, Musicians.musician_name FROM Songs INNER JOIN Movies ON Songs.movie_id=Movies.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.Song_id INNER JOIN Artists ON Songs_Artists.Artist_id = Artists.artist_id INNER JOIN Lyricists ON Lyricists.lyricist_id=Songs.lyricist_id INNER JOIN Musicians ON Musicians.musician_id=Songs.musician_id WHERE Songs.song_name = ?;");
             preparedStatement.setString(1, songName);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -438,10 +444,13 @@ public class DatabaseHelper {
                 Song currentSong = currentHashMap.get(resultSet.getInt(1));
 
                 if (currentSong == null) {
-                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), resultSet.getInt(3));
+                    Lyricist lyricist = new Lyricist(resultSet.getInt(9), resultSet.getString(10));
+                    Musician musician = new Musician(resultSet.getInt(11), resultSet.getString(12));
+
+                    currentSong = new Song(resultSet.getInt(1), resultSet.getString(2), previousMovie, null, lyricist, musician);
 
                     if (previousMovie != null) {
-                        if (currentSong.getMovieId() == previousMovie.getId()) {
+                        if (currentSong.getMovie() != null && currentSong.getMovie().getId() == previousMovie.getId()) {
                             currentSong.setMovie(previousMovie);
                         } else {
                             previousMovie = new Movie();
@@ -452,7 +461,7 @@ public class DatabaseHelper {
                             currentSong.setMovie(previousMovie);
                         }
 
-                    } else if (previousMovie == null) {
+                    } else {
                         previousMovie = new Movie();
                         previousMovie.setId(resultSet.getInt(3));
                         previousMovie.setName(resultSet.getString(4));
@@ -494,7 +503,7 @@ public class DatabaseHelper {
 
         ResultSet resultSet = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT artist_id FROM Artists where artist_name = ?;");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT artist_id FROM Artists WHERE artist_name = ?;");
             preparedStatement.setString(1, name);
             resultSet = preparedStatement.executeQuery();
 
@@ -510,7 +519,7 @@ public class DatabaseHelper {
 
     public boolean deleteMovie(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("delete FROM Movies where movie_id=?;");
+            PreparedStatement preparedStatement = connection.prepareStatement("delete FROM Movies WHERE movie_id=?;");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             return true;
@@ -524,10 +533,10 @@ public class DatabaseHelper {
 
     public boolean updateMovie(Movie movie) {
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE Movies SET movie_name=?,movie_year=?,language_id=?,movie_record_no=? where movie_id=?;");
+            PreparedStatement statement = connection.prepareStatement("UPDATE Movies SET movie_name=?,movie_year=?,language_id=?,movie_record_no=? WHERE movie_id=?;");
             statement.setString(1, movie.getName());
             statement.setInt(2, movie.getYear());
-            statement.setInt(3, movie.getLanguageId());
+            statement.setInt(3, movie.getLanguage().getId());
             statement.setInt(4, movie.getRecordNo());
             statement.setInt(5, movie.getId());
 
@@ -547,11 +556,13 @@ public class DatabaseHelper {
             statement.setInt(1, song.getId());
             statement.executeUpdate();
 
-            statement = connection.prepareStatement("UPDATE Songs SET song_name=?,movie_id=? where song_id=?;");
+            statement = connection.prepareStatement("UPDATE Songs SET song_name=?,movie_id=?,lyricist_id=?,musician_id=? WHERE song_id=?;");
 
             statement.setString(1, song.getName());
-            statement.setInt(2, song.getMovieId());
-            statement.setInt(3, song.getId());
+            statement.setInt(2, song.getMovie().getId());
+            statement.setInt(3, song.getLyricist().getId());
+            statement.setInt(4, song.getMusician().getId());
+            statement.setInt(5, song.getId());
             statement.executeUpdate();
 
             for (Artist artist : song.getArtists())
@@ -598,7 +609,7 @@ public class DatabaseHelper {
 
     public Artist getArtistFromName(String name) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Artists WHERE artist_name=?;");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + DATABASE_ARTISTS_TABLE_NAME + " WHERE artist_name=?;");
             statement.setString(1, name);
 
             ResultSet resultSet = statement.executeQuery();
@@ -613,7 +624,6 @@ public class DatabaseHelper {
         }
 
         return null;
-
     }
 
     public boolean deleteArtist(Artist artist) {
@@ -719,7 +729,7 @@ public class DatabaseHelper {
 
     public ArrayList<Record> getAllRecords() {
         try {
-            String query = "SELECT song_name,GROUP_CONCAT(artist_name SEPARATOR ', '),movie_name, movie_year,language_name,movie_record_no FROM Movies INNER JOIN Languages ON Movies.language_id = Languages.language_id INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Artists.artist_id=Songs_Artists.artist_id GROUP BY Songs.song_id;";
+            String query = "SELECT song_name,GROUP_CONCAT(artist_name SEPARATOR ', '),movie_name, movie_year,language_name,movie_record_no,Lyricists.lyricist_name,Musicians.musician_name FROM Movies INNER JOIN Languages ON Movies.language_id = Languages.language_id INNER JOIN Songs ON Movies.movie_id=Songs.movie_id INNER JOIN Songs_Artists ON Songs.song_id=Songs_Artists.song_id INNER JOIN Artists ON Artists.artist_id=Songs_Artists.artist_id INNER JOIN Lyricists ON Songs.lyricist_id=Lyricists.lyricist_id INNER JOIN Musicians ON Musicians.musician_id=Songs.musician_id GROUP BY Songs.song_id;";
 
             ResultSet resultSet = connection.createStatement().executeQuery(query);
 
@@ -733,6 +743,8 @@ public class DatabaseHelper {
                 record.setYear(resultSet.getInt(4));
                 record.setLanguage(resultSet.getString(5));
                 record.setRecordNo(resultSet.getInt(6));
+                record.setLyricist(resultSet.getString(7));
+                record.setMusician(resultSet.getString(8));
                 records.add(record);
             }
 
@@ -780,6 +792,189 @@ public class DatabaseHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public boolean deleteLyricist(Lyricist lyricist) {
+        try {
+
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM " + DATABASE_LYRICISTS_TABLE_NAME + " WHERE lyricist_id=?;");
+            preparedStatement.setInt(1, lyricist.getId());
+            preparedStatement.executeUpdate();
+
+            return true;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean updateLyricist(Lyricist lyricist) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE " + DATABASE_LYRICISTS_TABLE_NAME + " SET lyricist_name=? WHERE lyricist_id=?;");
+            statement.setString(1, lyricist.getName());
+            statement.setInt(2, lyricist.getId());
+
+            statement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void addMusician(Musician musician) {
+        try {
+            Statement statement = connection.createStatement();
+
+            String query = "INSERT INTO " + DATABASE_MUSICIANS_TABLE_NAME + " (musician_name) VALUES('" + musician.getName() + "');";
+
+            statement.executeUpdate(query);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean updateMusician(Musician musician) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE " + DATABASE_MUSICIANS_TABLE_NAME + " SET musician_name=? WHERE musician_id=?;");
+            statement.setString(1, musician.getName());
+            statement.setInt(2, musician.getId());
+            statement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean deleteMusician(Musician musician) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM " + DATABASE_MUSICIANS_TABLE_NAME + " WHERE musician_id=?;");
+            preparedStatement.setInt(1, musician.getId());
+            preparedStatement.executeUpdate();
+
+            return true;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public ArrayList<Lyricist> getAvailableLyricists() {
+        try {
+            ArrayList<Lyricist> lyricists = new ArrayList<>();
+
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + DATABASE_LYRICISTS_TABLE_NAME + ";");
+
+            while (resultSet.next()) {
+                Lyricist lyricist = new Lyricist(resultSet.getInt(1), resultSet.getString(2));
+                lyricists.add(lyricist);
+            }
+
+            return lyricists;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public ArrayList<Musician> getAvailableMusicians() {
+        try {
+            ArrayList<Musician> musicians = new ArrayList<>();
+
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + DATABASE_MUSICIANS_TABLE_NAME + ";");
+
+            while (resultSet.next()) {
+                Musician musician = new Musician(resultSet.getInt(1), resultSet.getString(2));
+                musicians.add(musician);
+            }
+
+            return musicians;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public HashSet<String> getAllLyricists() {
+        HashSet<String> allLyricists = new HashSet<>();
+
+        try {
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT lyricist_name FROM " + DATABASE_LYRICISTS_TABLE_NAME +  " ;");
+
+            while (resultSet.next())
+                allLyricists.add(resultSet.getString(1));
+
+            return allLyricists;
+
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public Lyricist getLyricistFromName(String name) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + DATABASE_LYRICISTS_TABLE_NAME + " WHERE lyricist_name=?;");
+            statement.setString(1, name);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return new Lyricist(resultSet.getInt(1),resultSet.getString(2));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public HashSet<String> getAllMusicians() {
+        HashSet<String> allMusicians = new HashSet<>();
+
+        try {
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT musician_name FROM " + DATABASE_MUSICIANS_TABLE_NAME +  ";");
+
+            while (resultSet.next())
+                allMusicians.add(resultSet.getString(1));
+
+            return allMusicians;
+
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public Musician getMusicianFromName(String name) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + DATABASE_MUSICIANS_TABLE_NAME + " WHERE musician_name=?;");
+            statement.setString(1, name);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return new Musician(resultSet.getInt(1),resultSet.getString(2));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }

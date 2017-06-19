@@ -46,19 +46,19 @@ public class AddLanguageWindow extends Application implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         btnSaveLanguage.setOnAction(event -> addLanguage());
-        txtFieldLanguageName.setOnKeyPressed(event ->{
-            if(event.getCode()== KeyCode.ENTER)
+        txtFieldLanguageName.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER)
                 addLanguage();
         });
 
-        btnSaveLanguage.setOnKeyPressed(event ->{
-            if(event.getCode()==KeyCode.ENTER)
+        btnSaveLanguage.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER)
                 btnSaveLanguage.fire();
         });
     }
 
-    public void addLanguage(){
-        if(txtFieldLanguageName.getText().length()==0){
+    public void addLanguage() {
+        if (txtFieldLanguageName.getText().length() == 0) {
             Utils.showError("Invalid Input");
             return;
         }
@@ -66,9 +66,9 @@ public class AddLanguageWindow extends Application implements Initializable {
         Language language = new Language(txtFieldLanguageName.getText());
         new DatabaseHelper().addLanguage(language);
 
-        if(languageAddedCallBack!=null)
+        if (languageAddedCallBack != null)
             languageAddedCallBack.languageAdded();
 
-        ((Stage)(btnSaveLanguage.getScene()).getWindow()).close();
+        ((Stage) (btnSaveLanguage.getScene()).getWindow()).close();
     }
 }

@@ -1,8 +1,7 @@
 package com.suraj.musicmanagement.controllers;
 
-import com.suraj.musicmanagement.data.Artist;
-import com.suraj.musicmanagement.data.Movie;
-import com.suraj.musicmanagement.data.Song;
+import com.suraj.musicmanagement.Utils;
+import com.suraj.musicmanagement.data.*;
 import com.suraj.musicmanagement.interfaces.MovieEditedCallBack;
 import com.suraj.musicmanagement.interfaces.SongEditedCallBack;
 import javafx.application.Application;
@@ -85,19 +84,9 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
     private void setupEditButton() {
         btnEditMovie.setOnAction(e -> {
             AddMovieWindow.setMovie(movie);
-            Parent root = null;
-            try {
-                AddMovieWindow.addMovieEditedCallBack(this);
-                setupCloseEvent();
-                root = FXMLLoader.load(getClass().getResource("../ui/AddMovieWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setScene(new Scene(root, 500, 300));
-                stage.show();
-
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            AddMovieWindow.addMovieEditedCallBack(this);
+            setupCloseEvent();
+            Utils.openWindow(getClass().getResource("../ui/AddMovieWindow.fxml"), 500, 300);
         });
     }
 
@@ -109,7 +98,6 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
         TableColumn<Song, String> tableColumnArtists = new TableColumn<>("Artists");
         tableColumnArtists.setMinWidth(300);
-        tableColumnArtists.setCellValueFactory(new PropertyValueFactory<>("artists"));
 
         tableColumnArtists.setCellValueFactory(param -> {
             ArrayList<Artist> artists = param.getValue().getArtists();
@@ -127,6 +115,24 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
             return new SimpleStringProperty(stringBuffer.toString());
         });
 
+        TableColumn<Song, String> tableColumnLyricist = new TableColumn<>("Lyricist");
+        tableColumnLyricist.setMinWidth(150);
+
+        tableColumnLyricist.setCellValueFactory(param -> {
+            Lyricist lyricist = param.getValue().getLyricist();
+            return new SimpleStringProperty(lyricist.getName());
+
+        });
+
+        TableColumn<Song, String> tableColumnMusician = new TableColumn<>("Musician");
+        tableColumnMusician.setMinWidth(150);
+
+        tableColumnMusician.setCellValueFactory(param -> {
+            Musician musician = param.getValue().getMusician();
+            return new SimpleStringProperty(musician.getName());
+
+        });
+
 
         ObservableList<Song> songObservableList = FXCollections.observableArrayList();
 
@@ -134,6 +140,8 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
         tblSearchResults.getColumns().add(tableColumnSongName);
         tblSearchResults.getColumns().add(tableColumnArtists);
+        tblSearchResults.getColumns().add(tableColumnLyricist);
+        tblSearchResults.getColumns().add(tableColumnMusician);
 
         tblSearchResults.setItems(songObservableList);
 
@@ -143,22 +151,13 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
                 if (event.getClickCount() == 2 && tableRow.getItem() != null) {
                     AddSongWindow.setSong(tableRow.getItem());
 
-                    Parent root = null;
-                    try {
-                        AddSongWindow.addSongEditedCallBack(this);
+                    AddSongWindow.addSongEditedCallBack(this);
 
-                        (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
-                            AddSongWindow.removeSongEditedCallBack(this);
-                        });
+                    (tblSearchResults.getScene()).getWindow().setOnCloseRequest(event1 -> {
+                        AddSongWindow.removeSongEditedCallBack(this);
+                    });
 
-                        root = FXMLLoader.load(getClass().getResource("../ui/AddSongWindow.fxml"));
-                        Stage stage = new Stage();
-                        stage.setScene(new Scene(root, 500, 400));
-                        stage.show();
-
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+                    Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
 
                 }
             });
@@ -169,7 +168,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     private void setMovieDetails() {
         lblMovieName.setText(movie.getName());
-        lblMovieLanguage.setText("Language: " + movie.getLanguage());
+        lblMovieLanguage.setText("Language: " + movie.getLanguage().getName());
         lblMovieYear.setText("Year: " + movie.getYear());
         lblMovieRecordNumber.setText("Record No: " + movie.getRecordNo());
     }

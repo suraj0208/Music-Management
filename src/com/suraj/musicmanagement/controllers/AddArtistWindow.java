@@ -102,10 +102,10 @@ public class AddArtistWindow extends Application implements Initializable {
             });
 
             btnDeleteArtist.setOnAction(event -> {
-                if(!Utils.confirmDialog("Do you want to delete artist and all its songs?"))
+                if (!Utils.confirmDialog("Do you want to delete artist and all its songs?"))
                     return;
 
-                if(new DatabaseHelper().deleteArtist(artist)){
+                if (new DatabaseHelper().deleteArtist(artist)) {
                     Utils.showInfo("Artist Deleted");
 
                     if (artistAddedCallBacks != null)
@@ -114,7 +114,7 @@ public class AddArtistWindow extends Application implements Initializable {
                                 artistAddedCallBack.artistAdded();
 
                     closeWindow();
-                }else{
+                } else {
                     Utils.showError("Error Occurred");
                 }
             });

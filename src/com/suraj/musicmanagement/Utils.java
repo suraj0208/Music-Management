@@ -1,7 +1,17 @@
 package com.suraj.musicmanagement;
 
+import com.suraj.musicmanagement.controllers.AddSongWindow;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Created by suraj on 8/6/17.
@@ -52,5 +62,46 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static void openWindow(URL location, int width, int height){
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(location);
+
+            root = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root, width, height));
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    public static void openWindowMaximized(URL location, int width, int height){
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(location);
+
+            root = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root, width, height));
+
+            Screen screen = Screen.getPrimary();
+            Rectangle2D bounds = screen.getVisualBounds();
+
+            stage.setX(bounds.getMinX());
+            stage.setY(bounds.getMinY());
+            stage.setWidth(bounds.getWidth());
+            stage.setHeight(bounds.getHeight());
+
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 }

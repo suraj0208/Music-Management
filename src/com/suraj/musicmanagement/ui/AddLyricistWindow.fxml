@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="301.999977929685" prefWidth="478.99999482421117" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.suraj.musicmanagement.controllers.AddArtistWindow">
+<BorderPane prefHeight="301.999977929685" prefWidth="478.99999482421117" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.suraj.musicmanagement.controllers.AddLyricistWindow">
   <bottom>
     <HBox prefHeight="111.0" prefWidth="521.0" />
   </bottom>
@@ -19,19 +19,19 @@
             <Font size="18.0" fx:id="x1" />
           </font>
         </Label>
-        <TextField fx:id="txtFieldArtistName" prefHeight="32.0" prefWidth="373.0" promptText="Artist Name" GridPane.columnIndex="1" GridPane.rowIndex="0">
+        <TextField fx:id="txtFieldLyricistName" prefHeight="32.0" prefWidth="373.0" promptText="Lyricist Name" GridPane.columnIndex="1" GridPane.rowIndex="0">
           <GridPane.margin>
-            <Insets left="5.0" right="10.0" />
+            <Insets left="5.0" right="10.0" fx:id="x2" />
           </GridPane.margin>
         </TextField>
-        <GridPane hgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <GridPane hgap="5.0" GridPane.columnIndex="1" GridPane.margin="$x2" GridPane.rowIndex="1">
           <children>
-            <Button fx:id="btnSaveArtist" mnemonicParsing="false" prefHeight="28.0" prefWidth="188.99990000000253" text="Save" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Button fx:id="btnSaveLyricist" mnemonicParsing="false" prefHeight="28.0" prefWidth="397.0" text="Save" GridPane.columnIndex="0" GridPane.rowIndex="0">
               <GridPane.margin>
                 <Insets />
               </GridPane.margin>
             </Button>
-            <Button id="btnSaveArtist" fx:id="btnDeleteArtist" mnemonicParsing="false" prefHeight="28.0" prefWidth="189.0" text="Delete" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Button id="btnSaveLyricist" fx:id="btnDeleteLyricist" mnemonicParsing="false" prefHeight="28.0" prefWidth="196.0" text="Delete" GridPane.columnIndex="1" GridPane.rowIndex="0" />
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -40,14 +40,11 @@
           <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           </rowConstraints>
-          <GridPane.margin>
-            <Insets left="5.0" right="5.0" fx:id="x2" />
-          </GridPane.margin>
         </GridPane>
       </children>
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="299.0" minWidth="10.0" prefWidth="68.0" />
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.0" minWidth="10.0" prefWidth="411.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="299.0" minWidth="10.0" prefWidth="69.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.0" minWidth="10.0" prefWidth="410.0" />
       </columnConstraints>
       <rowConstraints>
         <RowConstraints maxHeight="98.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
@@ -59,7 +56,7 @@
     </GridPane>
   </center>
   <top>
-    <Label fx:id="lblAddArtistWindowTitle" text="Add Artist" BorderPane.alignment="CENTER">
+    <Label fx:id="lblAddLyricistWindowTitle" text="Add Lyricist" BorderPane.alignment="CENTER">
       <font>
         <Font name="System Bold" size="22.0" />
       </font>

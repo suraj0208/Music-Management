@@ -11,6 +11,26 @@ public class Record {
     private String language;
     private int recordNo;
 
+    public String getMusician() {
+        return musician;
+    }
+
+    public void setMusician(String musician) {
+        this.musician = musician;
+    }
+
+    public String getLyricist() {
+        return lyricist;
+    }
+
+    public void setLyricist(String lyricist) {
+        this.lyricist = lyricist;
+    }
+
+    private String musician;
+    private String lyricist;
+
+
     public String getSongName() {
         return songName;
     }
