@@ -42,6 +42,14 @@ public class AllRecordsSearchWindow extends Application implements Initializable
         tableColumnArtists.setMinWidth(250);
         tableColumnArtists.setCellValueFactory(new PropertyValueFactory<>("artists"));
 
+        TableColumn<Record, String> tableColumnLyricist = new TableColumn<>("Lyricist");
+        tableColumnLyricist.setMinWidth(200);
+        tableColumnLyricist.setCellValueFactory(new PropertyValueFactory<>("lyricist"));
+
+        TableColumn<Record, String> tableColumnMusician = new TableColumn<>("Musician");
+        tableColumnMusician.setMinWidth(200);
+        tableColumnMusician.setCellValueFactory(new PropertyValueFactory<>("musician"));
+
         TableColumn<Record, String> tableColumnMovie = new TableColumn<>("Movie");
         tableColumnMovie.setMinWidth(200);
         tableColumnMovie.setCellValueFactory(new PropertyValueFactory<>("movieName"));
@@ -60,6 +68,8 @@ public class AllRecordsSearchWindow extends Application implements Initializable
 
         tblSearchResults.getColumns().add(tableColumnSongName);
         tblSearchResults.getColumns().add(tableColumnArtists);
+        tblSearchResults.getColumns().add(tableColumnLyricist);
+        tblSearchResults.getColumns().add(tableColumnMusician);
         tblSearchResults.getColumns().add(tableColumnMovie);
         tblSearchResults.getColumns().add(tableColumnYear);
         tblSearchResults.getColumns().add(tableColumnLanguage);

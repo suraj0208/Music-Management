@@ -1,6 +1,8 @@
 package com.suraj.musicmanagement.controllers;
 
 import com.suraj.musicmanagement.data.Artist;
+import com.suraj.musicmanagement.data.Lyricist;
+import com.suraj.musicmanagement.data.Musician;
 import com.suraj.musicmanagement.data.Song;
 import javafx.application.Application;
 import javafx.beans.InvalidationListener;
@@ -131,7 +133,6 @@ public class ArtistSongsSearchResults extends Application implements Initializab
 
         TableColumn<Song, String> tableColumnArtists = new TableColumn<>("Artists");
         tableColumnArtists.setMinWidth(250);
-        tableColumnArtists.setCellValueFactory(new PropertyValueFactory<>("artists"));
 
         tableColumnArtists.setCellValueFactory(param -> {
             ArrayList<Artist> artists = param.getValue().getArtists();
@@ -149,12 +150,32 @@ public class ArtistSongsSearchResults extends Application implements Initializab
             return new SimpleStringProperty(stringBuffer.toString());
         });
 
+        TableColumn<Song, String> tableColumnLyricist = new TableColumn<>("Lyricist");
+        tableColumnLyricist.setMinWidth(150);
+
+        tableColumnLyricist.setCellValueFactory(param -> {
+            Lyricist lyricist = param.getValue().getLyricist();
+            return new SimpleStringProperty(lyricist.getName());
+
+        });
+
+        TableColumn<Song, String> tableColumnMusician = new TableColumn<>("Musician");
+        tableColumnMusician.setMinWidth(150);
+
+        tableColumnMusician.setCellValueFactory(param -> {
+            Musician musician = param.getValue().getMusician();
+            return new SimpleStringProperty(musician.getName());
+
+        });
+
         ObservableList<Song> songObservableList = FXCollections.observableArrayList();
 
         songObservableList.addAll(songs);
 
         tblSearchResults.getColumns().add(tableColumnSongName);
         tblSearchResults.getColumns().add(tableColumnArtists);
+        tblSearchResults.getColumns().add(tableColumnLyricist);
+        tblSearchResults.getColumns().add(tableColumnMusician);
         tblSearchResults.getColumns().add(tableColumnMovie);
         tblSearchResults.getColumns().add(tableColumnYear);
         tblSearchResults.getColumns().add(tableColumnRecordNo);

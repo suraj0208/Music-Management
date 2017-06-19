@@ -145,7 +145,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             ArtistSongsSearchResults.setSearchName(searchName);
             ArtistSongsSearchResults.setSongs(songs);
-            Utils.openWindow(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"), 750, 500);
+            Utils.openWindow(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"), 1080, 500);
         } else if (searchFieldComboBox.getValue().equals("Record No")) {
             try {
                 songs = databaseHelper.getSongsForMovie(Integer.parseInt(searchName));
