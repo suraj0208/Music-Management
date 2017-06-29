@@ -63,7 +63,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/MovieSongsSearchResultsWindow.fxml"));
         primaryStage.setTitle("Search Results");
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();
@@ -86,7 +86,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
             AddMovieWindow.setMovie(movie);
             AddMovieWindow.addMovieEditedCallBack(this);
             setupCloseEvent();
-            Utils.openWindow(getClass().getResource("../ui/AddMovieWindow.fxml"), 500, 300);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddMovieWindow.fxml"), 500, 300);
         });
     }
 
@@ -157,7 +157,7 @@ public class MovieSongsSearchResultsWindow extends Application implements Initia
                         AddSongWindow.removeSongEditedCallBack(this);
                     });
 
-                    Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
+                    Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddSongWindow.fxml"), 500, 480);
 
                 }
             });

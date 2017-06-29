@@ -63,7 +63,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/AddMovieWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddMovieWindow.fxml"));
         primaryStage.setTitle("Add Movie");
         primaryStage.setScene(new Scene(root, 520, 300));
         primaryStage.show();
@@ -87,7 +87,7 @@ public class AddMovieWindow extends Application implements Initializable, Langua
         });
 
         btnAddNewLanguage.setOnAction(e -> {
-            Utils.openWindow(getClass().getResource("../ui/AddLanguageWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddLanguageWindow.fxml"), 500, 200);
             AddLanguageWindow.setLanguageAddedCallBack(this);
 
         });

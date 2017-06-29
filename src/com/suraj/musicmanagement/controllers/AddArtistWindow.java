@@ -60,7 +60,7 @@ public class AddArtistWindow extends Application implements Initializable {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/AddArtistWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddArtistWindow.fxml"));
         primaryStage.setTitle("Add Artist");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();

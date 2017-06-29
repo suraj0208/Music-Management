@@ -54,7 +54,7 @@ public class SongsSearchResultWindow extends Application implements Initializabl
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/SongsSearchResultWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SongsSearchResultWindow.fxml"));
         primaryStage.setTitle("Search Results");
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();
@@ -164,7 +164,7 @@ public class SongsSearchResultWindow extends Application implements Initializabl
                         AddSongWindow.removeSongEditedCallBack(this);
                     });
 
-                    Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
+                    Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddSongWindow.fxml"), 500, 480);
                 }
             });
             return tableRow;

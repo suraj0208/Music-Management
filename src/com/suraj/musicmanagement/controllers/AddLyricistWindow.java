@@ -60,7 +60,7 @@ public class AddLyricistWindow extends Application implements Initializable {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/AddLyricistWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddLyricistWindow.fxml"));
         primaryStage.setTitle("Add Lyricist");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();

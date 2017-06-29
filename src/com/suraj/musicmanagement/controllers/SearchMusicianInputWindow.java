@@ -31,7 +31,7 @@ public class SearchMusicianInputWindow extends Application implements Initializa
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/SearchMusicianInputWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SearchMusicianInputWindow.fxml"));
         primaryStage.setTitle("Search Musician");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
@@ -65,7 +65,7 @@ public class SearchMusicianInputWindow extends Application implements Initializa
             }
 
             AddMusicianWindow.setMusician(musician);
-            Utils.openWindow(getClass().getResource("../ui/AddMusicianWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddMusicianWindow.fxml"), 500, 200);
             closeWindow();
         });
     }

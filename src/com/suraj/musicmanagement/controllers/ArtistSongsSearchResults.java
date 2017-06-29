@@ -51,7 +51,7 @@ public class ArtistSongsSearchResults extends Application implements Initializab
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/ArtistSongsSearchResults.fxml"));
         primaryStage.setTitle("Search Results");
         primaryStage.setScene(new Scene(root, 700, 500));
         primaryStage.show();

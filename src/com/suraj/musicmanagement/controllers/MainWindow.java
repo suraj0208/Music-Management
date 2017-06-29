@@ -17,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sun.applet.Main;
 
 import java.io.File;
 import java.net.URL;
@@ -94,7 +95,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             SongsSearchResultWindow.setSongs(songs);
             SongsSearchResultWindow.setSearchName(searchName);
 
-            Utils.openWindow(getClass().getResource("../ui/SongsSearchResultWindow.fxml"), 800, 500);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SongsSearchResultWindow.fxml"), 800, 500);
 
         } else if (searchFieldComboBox.getValue().equals("Movie")) {
 
@@ -121,7 +122,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             setupCloseActions();
 
             MovieSongsSearchResultsWindow.setSongs(songs);
-            Utils.openWindow(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
 
         } else if (searchFieldComboBox.getValue().equals("Artist")) {
             songs = databaseHelper.getSongsForArtist(searchName);
@@ -143,7 +144,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
             ArtistSongsSearchResults.setSearchName(searchName);
             ArtistSongsSearchResults.setSongs(songs);
-            Utils.openWindow(getClass().getResource("../ui/ArtistSongsSearchResults.fxml"), 1080, 500);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/ArtistSongsSearchResults.fxml"), 1080, 500);
         } else if (searchFieldComboBox.getValue().equals("Record No")) {
             try {
                 songs = databaseHelper.getSongsForMovie(Integer.parseInt(searchName));
@@ -165,7 +166,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
 
                 MovieSongsSearchResultsWindow.setMovie(songs.get(0).getMovie());
                 MovieSongsSearchResultsWindow.setSongs(songs);
-                Utils.openWindowMaximized(getClass().getResource("../ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
+                Utils.openWindowMaximized(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/MovieSongsSearchResultsWindow.fxml"), 800, 500);
 
             } catch (NumberFormatException ex) {
                 ex.printStackTrace();
@@ -253,7 +254,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addMusicianMenuItem.setOnAction(e -> {
             setupCloseActions();
             AddMusicianWindow.setMusician(null);
-            Utils.openWindow(getClass().getResource("../ui/AddMusicianWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddMusicianWindow.fxml"), 500, 200);
         });
 
         MenuItem editMusicianMenuItem = menuMusician.getItems().get(1);
@@ -261,7 +262,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         editMusicianMenuItem.setOnAction(e -> {
             setupCloseActions();
             AddMusicianWindow.addMusicianAddedCallBack(this);
-            Utils.openWindow(getClass().getResource("../ui/SearchMusicianInputWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SearchMusicianInputWindow.fxml"), 500, 200);
         });
     }
 
@@ -274,7 +275,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
             AddSongWindow.setSong(null);
             setupCloseActions();
             AddLyricistWindow.setLyricist(null);
-            Utils.openWindow(getClass().getResource("../ui/AddLyricistWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddLyricistWindow.fxml"), 500, 200);
         });
 
         MenuItem editLyricistMenuItem = menuSong.getItems().get(1);
@@ -282,7 +283,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         editLyricistMenuItem.setOnAction(e -> {
             setupCloseActions();
             AddLyricistWindow.addLyricistAddedCallBack(this);
-            Utils.openWindow(getClass().getResource("../ui/SearchLyricistInputWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SearchLyricistInputWindow.fxml"), 500, 200);
         });
 
     }
@@ -319,7 +320,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         displayAllItem.setOnAction(event -> {
             AllRecordsSearchWindow.setRecords(databaseHelper.getAllRecords());
             setupCloseActions();
-            Utils.openWindowMaximized(getClass().getResource("../ui/AllRecordsSearchWindow.fxml"), 1050, 800);
+            Utils.openWindowMaximized(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AllRecordsSearchWindow.fxml"), 1050, 800);
         });
 
     }
@@ -332,14 +333,14 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addArtistMenuItem.setOnAction(e -> {
             setupCloseActions();
             AddArtistWindow.setArtist(null);
-            Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddArtistWindow.fxml"), 500, 200);
         });
 
         MenuItem editArtistMenuItem = menuSong.getItems().get(1);
 
         editArtistMenuItem.setOnAction(e -> {
             setupCloseActions();
-            Utils.openWindow(getClass().getResource("../ui/SearchArtistInputWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SearchArtistInputWindow.fxml"), 500, 200);
 
         });
     }
@@ -352,7 +353,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addSongMenuItem.setOnAction(e -> {
             AddSongWindow.setSong(null);
             setupCloseActions();
-            Utils.openWindow(getClass().getResource("../ui/AddSongWindow.fxml"), 500, 480);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddSongWindow.fxml"), 500, 480);
 
         });
     }
@@ -365,7 +366,7 @@ public class MainWindow extends Application implements Initializable, MovieEdite
         addMovieMenuItem.setOnAction(e -> {
             AddMovieWindow.setMovie(null);
             setupCloseActions();
-            Utils.openWindow(getClass().getResource("../ui/AddMovieWindow.fxml"), 500, 300);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddMovieWindow.fxml"), 500, 300);
         });
     }
 

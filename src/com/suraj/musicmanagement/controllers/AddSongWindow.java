@@ -90,7 +90,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/AddSongWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddSongWindow.fxml"));
         primaryStage.setTitle("Add data.Song");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
@@ -124,13 +124,13 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
         btnAddNewLyricist.setOnAction(event -> {
             AddLyricistWindow.setLyricist(null);
-            Utils.openWindow(getClass().getResource("../ui/AddLyricistWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddLyricistWindow.fxml"), 500, 200);
             setupCloseActions();
         });
 
         btnAddNewMusician.setOnAction(event -> {
             AddMusicianWindow.setMusician(null);
-            Utils.openWindow(getClass().getResource("../ui/AddMusicianWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddMusicianWindow.fxml"), 500, 200);
             setupCloseActions();
         });
 
@@ -161,7 +161,7 @@ public class AddSongWindow extends Application implements Initializable, ArtistA
 
         btnAddNewArtist.setOnAction(e -> {
             AddArtistWindow.setArtist(null);
-            Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddArtistWindow.fxml"), 500, 200);
             setupCloseActions();
         });
 

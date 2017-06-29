@@ -33,7 +33,7 @@ public class SearchArtistInputWindow extends Application implements Initializabl
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/SearchArtistInputWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SearchArtistInputWindow.fxml"));
         primaryStage.setTitle("Search Artist");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
@@ -67,7 +67,7 @@ public class SearchArtistInputWindow extends Application implements Initializabl
             }
 
             AddArtistWindow.setArtist(artist);
-            Utils.openWindow(getClass().getResource("../ui/AddArtistWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddArtistWindow.fxml"), 500, 200);
             closeWindow();
         });
     }

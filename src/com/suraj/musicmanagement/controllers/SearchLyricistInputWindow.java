@@ -31,7 +31,7 @@ public class SearchLyricistInputWindow extends Application implements Initializa
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../ui/SearchLyricistInputWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/SearchLyricistInputWindow.fxml"));
         primaryStage.setTitle("Search Lyricist");
         primaryStage.setScene(new Scene(root, 500, 200));
         primaryStage.show();
@@ -65,7 +65,7 @@ public class SearchLyricistInputWindow extends Application implements Initializa
             }
 
             AddLyricistWindow.setLyricist(lyricist);
-            Utils.openWindow(getClass().getResource("../ui/AddLyricistWindow.fxml"), 500, 200);
+            Utils.openWindow(getClass().getClassLoader().getResource("com/suraj/musicmanagement/ui/AddLyricistWindow.fxml"), 500, 200);
             closeWindow();
         });
     }
